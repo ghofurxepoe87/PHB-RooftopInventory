@@ -1,72 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-    <style>
-  /* KODE KHUSUS UNTUK MERAPIKAN TAMPILAN DI HP ANDROID & IPHONE */
-  @media screen and (max-width: 768px) {
-    /* Cegah layar HP tergeser ke kanan kosong */
-    body, html {
-      overflow-x: hidden !important;
-      max-width: 100vw !important;
-    }
-    /* Paksa tabel agar bisa digeser (swipe) ke kiri/kanan */
-    table {
-      display: block !important;
-      width: 100% !important;
-      overflow-x: auto !important;
-      -webkit-overflow-scrolling: touch !important;
-      white-space: nowrap !important;
-    }
-    /* Memastikan menu atas (header & tombol) mau turun ke bawah dan tidak bertumpuk */
-    header, .flex, [style*="display: flex"] {
-      flex-wrap: wrap !important;
-    }
-  }
-</style>
-    <style>
-/* KODE PENYEMPURNA LAYAR HP ANDROID & IPHONE */
-@media screen and (max-width: 768px) {
-    /* 1. Mencegah seluruh layar geser ke kanan */
-    body, html {
-        overflow-x: hidden !important;
-        width: 100% !important;
-    }
-
-    /* 2. MENYELESAIKAN MENU NAVIGASI BERTUMPUK (Jadikan horizontal scroll) */
-    nav, ul, .nav, .tabs, [class*="menu"], [class*="tab"] {
-        display: flex !important;
-        flex-wrap: nowrap !important; /* Paksa 1 baris */
-        overflow-x: auto !important; /* Bisa digeser */
-        -webkit-overflow-scrolling: touch !important; /* Geser mulus di HP */
-        padding-bottom: 5px !important;
-    }
-    
-    /* Pastikan tombol menu tidak gepeng */
-    nav > *, ul > *, .nav > *, .tabs > *, [class*="menu"] > *, [class*="tab"] > * {
-        flex: 0 0 auto !important;
-        white-space: nowrap !important;
-    }
-
-    /* Sembunyikan garis scrollbar agar bersih */
-    nav::-webkit-scrollbar, ul::-webkit-scrollbar, [class*="menu"]::-webkit-scrollbar {
-        display: none !important;
-    }
-
-    /* 3. MENYELESAIKAN TEKS JUDUL BERTABRAKAN ("PAPAN") */
-    header, [class*="header"], [class*="title"], h1, h2, p, span {
-        white-space: normal !important;
-        word-wrap: break-word !important;
-    }
-
-    /* 4. TABEL TETAP BISA DIGESER (Varian Dashboard) */
-    table {
-        display: block !important;
-        width: 100% !important;
-        overflow-x: auto !important;
-        -webkit-overflow-scrolling: touch !important;
-        white-space: nowrap !important;
-    }
-}
-</style>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -105,10 +38,11 @@
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #e2e8f0; }
-        /* Scrollbar ala VHP */
+        
+        /* Scrollbar Desktop ala VHP */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; border-left: 1px solid #cbd5e1; }
-        ::-webkit-scrollbar-thumb { background: #94a3b8; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
         
         .vhp-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
@@ -120,6 +54,17 @@
             body { background: white !important; }
             .vhp-shadow { box-shadow: none !important; border: none !important; }
         }
+
+        /* --- TAMBAHAN KHUSUS UNTUK HP ANDROID & IPHONE --- */
+        @media screen and (max-width: 768px) {
+            /* Kunci layar agar tidak bisa tergeser ke kanan */
+            body, html { max-width: 100vw; overflow-x: hidden; }
+            /* Menyembunyikan scrollbar di menu tab agar terlihat rapi */
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+            .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            /* Memaksa elemen tabel agar tidak turun baris (hancur) di layar kecil */
+            .table-responsive th, .table-responsive td { white-space: nowrap; }
+        }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col antialiased pb-12">
@@ -127,28 +72,29 @@
     <!-- TOP HEADER BAR (VHP Style) -->
     <header class="bg-platinum-dark text-white border-b-4 border-platinum-gold no-print z-30 sticky top-0 vhp-shadow">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6">
-            <div class="flex items-center justify-between h-16">
+            <!-- Diubah: Dibuat auto-height (py-3) dan bisa melipat ke bawah (flex-wrap) di layar kecil -->
+            <div class="flex flex-wrap items-center justify-between py-3 gap-3">
                 
                 <!-- Logo & Brand -->
-                <div class="flex items-center space-x-4">
-                    <div class="bg-white p-1.5 rounded shadow-sm border border-slate-300">
-                        <img src="logo.png" alt="Logo Platinum Hotel" class="h-8 w-auto object-contain">
+                <div class="flex items-center space-x-3 sm:space-x-4 w-full md:w-auto">
+                    <div class="bg-white p-1.5 rounded shadow-sm border border-slate-300 shrink-0">
+                        <img src="logo.png" alt="Logo Platinum Hotel" class="h-6 sm:h-8 w-auto object-contain">
                     </div>
-                    <div class="flex flex-col">
-                        <h1 class="font-bold text-lg tracking-wide uppercase text-slate-100 flex items-center gap-2">
+                    <div class="flex flex-col min-w-0">
+                        <h1 class="font-bold text-sm sm:text-lg tracking-wide uppercase text-slate-100 flex flex-wrap items-center gap-1 sm:gap-2 leading-tight">
                             Rooftop Platinum <span class="text-platinum-gold">Hotel & Convention Balikpapan</span>
                         </h1>
-                        <span class="text-[10px] text-slate-400 tracking-widest font-semibold uppercase">FBM Inventory System Module v2.0</span>
+                        <span class="text-[9px] sm:text-[10px] text-slate-400 tracking-widest font-semibold uppercase truncate">FBM Inventory System Module v2.0</span>
                     </div>
                 </div>
 
                 <!-- Global Action & Date Selection -->
-                <div class="flex items-center space-x-3">
+                <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end">
                     <!-- Date Picker Module -->
-                    <div class="bg-platinum-panel border border-slate-700 rounded flex items-center px-2 py-1 text-sm shadow-inner">
+                    <div class="bg-platinum-panel border border-slate-700 rounded flex items-center px-2 py-1.5 text-sm shadow-inner flex-grow sm:flex-grow-0 justify-center">
                         <i class="fa-regular fa-calendar-days text-platinum-gold mr-2"></i>
                         <select id="daySelect" onchange="updateDayContext()" class="bg-transparent text-white font-bold outline-none cursor-pointer text-center mr-1"></select>
-                        <select id="monthSelect" onchange="updateCalendarContext()" class="bg-transparent text-white font-medium outline-none cursor-pointer mr-1">
+                        <select id="monthSelect" onchange="updateCalendarContext()" class="bg-transparent text-white font-medium outline-none cursor-pointer mr-1 max-w-[80px] sm:max-w-none">
                             <option value="0" class="bg-platinum-panel">Januari</option>
                             <option value="1" class="bg-platinum-panel">Februari</option>
                             <option value="2" class="bg-platinum-panel">Maret</option>
@@ -165,52 +111,52 @@
                         <select id="yearSelect" onchange="updateCalendarContext()" class="bg-transparent text-white font-medium outline-none cursor-pointer"></select>
                     </div>
 
-                    <!-- New Item Button -->
-                    <button onclick="openAddItemModal()" class="bg-slate-700 hover:bg-slate-600 border border-slate-500 text-white font-medium px-3 py-1.5 rounded text-sm transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-plus text-platinum-gold"></i> Master Item
-                    </button>
-                    
-                    <!-- Save Button -->
-                    <button onclick="manualSaveWithFeedback()" class="bg-platinum-gold hover:bg-amber-500 text-white font-bold px-4 py-1.5 rounded text-sm transition flex items-center gap-1.5 shadow-md">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Data
-                    </button>
+                    <!-- Buttons -->
+                    <div class="flex items-center gap-2 flex-grow sm:flex-grow-0">
+                        <button onclick="openAddItemModal()" class="flex-1 sm:flex-none bg-slate-700 hover:bg-slate-600 border border-slate-500 text-white font-medium px-3 py-1.5 rounded text-xs sm:text-sm transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-plus text-platinum-gold"></i> Master Item
+                        </button>
+                        <button onclick="manualSaveWithFeedback()" class="flex-1 sm:flex-none bg-platinum-gold hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-floppy-disk"></i> Simpan
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- MODULE TABS (VHP Style) -->
-        <div class="bg-platinum-panel pt-2 px-4 sm:px-6 max-w-[1400px] mx-auto flex space-x-1 overflow-x-auto no-scrollbar">
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn active px-4 py-2 text-sm font-bold bg-white text-platinum-dark border-t-2 border-platinum-gold rounded-t flex items-center gap-2">
+        <!-- MODULE TABS (VHP Style) - Ditambahkan flex-nowrap dan shrink-0 agar tidak bertumpuk -->
+        <div class="bg-platinum-panel pt-2 px-2 sm:px-6 max-w-[1400px] mx-auto flex space-x-1 overflow-x-auto no-scrollbar flex-nowrap" style="-webkit-overflow-scrolling: touch;">
+            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn active shrink-0 px-4 py-2 text-sm font-bold bg-white text-platinum-dark border-t-2 border-platinum-gold rounded-t flex items-center gap-2">
                 <i class="fa-solid fa-chart-bar"></i> Dashboard
             </button>
-            <button onclick="switchTab('opening')" id="tab-opening" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
+            <button onclick="switchTab('opening')" id="tab-opening" class="nav-btn shrink-0 px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2 transition">
                 <i class="fa-solid fa-box-open"></i> Opening Stock
             </button>
-            <button onclick="switchTab('sr')" id="tab-sr" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
+            <button onclick="switchTab('sr')" id="tab-sr" class="nav-btn shrink-0 px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2 transition">
                 <i class="fa-solid fa-truck-ramp-box"></i> Store Requisition
             </button>
-            <button onclick="switchTab('closing')" id="tab-closing" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
+            <button onclick="switchTab('closing')" id="tab-closing" class="nav-btn shrink-0 px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2 transition">
                 <i class="fa-solid fa-clipboard-check"></i> Physical Closing
             </button>
-            <button onclick="switchTab('modifier')" id="tab-modifier" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
+            <button onclick="switchTab('modifier')" id="tab-modifier" class="nav-btn shrink-0 px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2 transition">
                 <i class="fa-solid fa-cocktail"></i> Spillage / Modifier
             </button>
-            <button onclick="switchTab('entertainment')" id="tab-entertainment" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
+            <button onclick="switchTab('entertainment')" id="tab-entertainment" class="nav-btn shrink-0 px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2 transition">
                 <i class="fa-solid fa-glass-cheers"></i> Entertainment
             </button>
-            <button onclick="switchTab('recap')" id="tab-recap" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
+            <button onclick="switchTab('recap')" id="tab-recap" class="nav-btn shrink-0 px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2 transition">
                 <i class="fa-solid fa-print"></i> Report / Recap
             </button>
         </div>
     </header>
 
     <!-- SYSTEM STATUS BAR -->
-    <div class="bg-white border-b border-slate-300 text-xs px-4 sm:px-6 py-2 shadow-sm max-w-[1400px] mx-auto w-full flex justify-between items-center text-slate-500 font-medium">
-        <div class="flex items-center gap-4">
-            <span class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-500"></div> System Online</span>
-            <span class="border-l border-slate-300 pl-4 flex items-center gap-1.5"><i class="fa-solid fa-folder-open text-amber-500"></i> Active Period: <span id="activeDateDisplay" class="text-platinum-dark font-bold">Memuat...</span></span>
+    <div class="bg-white border-b border-slate-300 text-[11px] sm:text-xs px-4 sm:px-6 py-2 shadow-sm max-w-[1400px] mx-auto w-full flex flex-wrap justify-between items-center text-slate-500 font-medium gap-2">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 w-full sm:w-auto">
+            <span class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> System Online</span>
+            <span class="sm:border-l border-slate-300 sm:pl-4 flex items-center gap-1.5"><i class="fa-solid fa-folder-open text-amber-500"></i> Active Period: <span id="activeDateDisplay" class="text-platinum-dark font-bold">Memuat...</span></span>
         </div>
-        <button onclick="exportJSONBackup()" class="hover:text-platinum-dark flex items-center gap-1">
+        <button onclick="exportJSONBackup()" class="hover:text-platinum-dark flex items-center gap-1 ml-auto sm:ml-0 bg-slate-100 px-2 py-1 rounded">
             <i class="fa-solid fa-database"></i> Backup DB
         </button>
     </div>
@@ -230,33 +176,34 @@
         <!-- SECTION 1: DASHBOARD -->
         <section id="view-dashboard" class="view-section space-y-4">
             <!-- KPI Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-4 rounded vhp-shadow border-l-4 border-slate-500 flex items-center justify-between">
-                    <div><p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Total Master Item</p><h3 class="text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalItems">0</h3></div>
-                    <div class="text-slate-300"><i class="fa-solid fa-boxes-stacked text-3xl"></i></div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <div class="bg-white p-3 sm:p-4 rounded vhp-shadow border-l-4 border-slate-500 flex items-center justify-between">
+                    <div><p class="text-[9px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide">Total Master Item</p><h3 class="text-xl sm:text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalItems">0</h3></div>
+                    <div class="text-slate-200"><i class="fa-solid fa-boxes-stacked text-2xl sm:text-3xl"></i></div>
                 </div>
-                <div class="bg-white p-4 rounded vhp-shadow border-l-4 border-blue-500 flex items-center justify-between">
-                    <div><p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Store Req In (Vol)</p><h3 class="text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalSR">0 ml</h3></div>
-                    <div class="text-blue-100"><i class="fa-solid fa-dolly text-3xl"></i></div>
+                <div class="bg-white p-3 sm:p-4 rounded vhp-shadow border-l-4 border-blue-500 flex items-center justify-between">
+                    <div><p class="text-[9px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide">Store Req In</p><h3 class="text-xl sm:text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalSR">0 ml</h3></div>
+                    <div class="text-blue-100"><i class="fa-solid fa-dolly text-2xl sm:text-3xl"></i></div>
                 </div>
-                <div class="bg-white p-4 rounded vhp-shadow border-l-4 border-emerald-500 flex items-center justify-between">
-                    <div><p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Sales POS Consumed</p><h3 class="text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalConsumed">0 ml</h3></div>
-                    <div class="text-emerald-100"><i class="fa-solid fa-cash-register text-3xl"></i></div>
+                <div class="bg-white p-3 sm:p-4 rounded vhp-shadow border-l-4 border-emerald-500 flex items-center justify-between">
+                    <div><p class="text-[9px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide">Sales POS</p><h3 class="text-xl sm:text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalConsumed">0 ml</h3></div>
+                    <div class="text-emerald-100"><i class="fa-solid fa-cash-register text-2xl sm:text-3xl"></i></div>
                 </div>
-                <div class="bg-white p-4 rounded vhp-shadow border-l-4 border-red-500 flex items-center justify-between">
-                    <div><p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Ent. & Spillage (Vol)</p><h3 class="text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalEnt">0 ml</h3></div>
-                    <div class="text-red-100"><i class="fa-solid fa-wine-glass-empty text-3xl"></i></div>
+                <div class="bg-white p-3 sm:p-4 rounded vhp-shadow border-l-4 border-red-500 flex items-center justify-between">
+                    <div><p class="text-[9px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide">Ent/Spill (Vol)</p><h3 class="text-xl sm:text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalEnt">0 ml</h3></div>
+                    <div class="text-red-100"><i class="fa-solid fa-wine-glass-empty text-2xl sm:text-3xl"></i></div>
                 </div>
             </div>
 
             <!-- Datagrid -->
             <div class="bg-white rounded vhp-shadow border border-slate-300 flex flex-col">
-                <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
+                <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex flex-wrap justify-between items-center gap-2 rounded-t">
                     <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-table text-platinum-gold"></i> Live Variance Dashboard (ML)</h2>
-                    <span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">Real-time Calculation</span>
+                    <span class="text-[10px] sm:text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">Real-time Calculation</span>
                 </div>
-                <div class="overflow-x-auto p-4">
-                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
+                <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
+                    <!-- Ditambahkan class table-responsive -->
+                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300 table-responsive min-w-[700px]">
                         <thead>
                             <tr class="bg-platinum-panel text-white">
                                 <th class="py-2 px-3 border border-slate-600 font-medium">Item Description</th>
@@ -279,12 +226,12 @@
             <div class="bg-white rounded vhp-shadow border border-slate-300">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
                     <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-box-open text-platinum-gold"></i> Opening Stock / Carry Forward</h2>
-                    <button onclick="copyClosingFromYesterday()" class="bg-platinum-panel hover:bg-slate-700 text-white text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-clock-rotate-left text-platinum-gold"></i> Load Prev. Closing
+                    <button onclick="copyClosingFromYesterday()" class="bg-platinum-panel hover:bg-slate-700 text-white text-[10px] sm:text-xs font-medium px-2 sm:px-3 py-1.5 rounded flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-clock-rotate-left text-platinum-gold"></i> <span class="hidden sm:inline">Load Prev. Closing</span><span class="sm:hidden">Load Prev</span>
                     </button>
                 </div>
-                <div class="overflow-x-auto p-4">
-                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
+                <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
+                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300 table-responsive min-w-[600px]">
                         <thead>
                             <tr class="bg-platinum-panel text-white">
                                 <th class="py-2 px-3 border border-slate-600 font-medium w-12 text-center">No</th>
@@ -307,8 +254,8 @@
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
                     <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-truck-ramp-box text-platinum-gold"></i> Store Requisition (Goods Receiving)</h2>
                 </div>
-                <div class="overflow-x-auto p-4">
-                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
+                <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
+                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300 table-responsive min-w-[750px]">
                         <thead>
                             <tr class="bg-platinum-panel text-white">
                                 <th class="py-2 px-3 border border-slate-600 font-medium">Item Description</th>
@@ -330,8 +277,8 @@
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
                     <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-clipboard-check text-platinum-gold"></i> Physical Closing Count & Variance Analysis</h2>
                 </div>
-                <div class="overflow-x-auto p-4">
-                    <table class="w-full text-left border-collapse text-[12px] border border-slate-300">
+                <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
+                    <table class="w-full text-left border-collapse text-[12px] border border-slate-300 table-responsive min-w-[900px]">
                         <thead>
                             <tr class="bg-platinum-panel text-white">
                                 <th class="py-2 px-2 border border-slate-600 font-medium">Item Name</th>
@@ -391,8 +338,8 @@
                     <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
                         <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-list text-platinum-gold"></i> Spillage & Modifier Ledger</h2>
                     </div>
-                    <div class="overflow-x-auto p-4">
-                        <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
+                    <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
+                        <table class="w-full text-left border-collapse text-[13px] border border-slate-300 table-responsive min-w-[500px]">
                             <thead>
                                 <tr class="bg-platinum-panel text-white">
                                     <th class="py-2 px-3 border border-slate-600 font-medium">Item</th>
@@ -443,8 +390,8 @@
                     <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
                         <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-list text-platinum-gold"></i> Entertainment Ledger</h2>
                     </div>
-                    <div class="overflow-x-auto p-4">
-                        <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
+                    <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
+                        <table class="w-full text-left border-collapse text-[13px] border border-slate-300 table-responsive min-w-[500px]">
                             <thead>
                                 <tr class="bg-platinum-panel text-white">
                                     <th class="py-2 px-3 border border-slate-600 font-medium">Item</th>
@@ -464,7 +411,7 @@
         <!-- SECTION 7: MONTHLY RECAP -->
         <section id="view-recap" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300 print-card">
-                <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t no-print">
+                <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex flex-wrap justify-between items-center gap-2 rounded-t no-print">
                     <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-file-excel text-platinum-gold"></i> Monthly Recap Report</h2>
                     <div class="flex gap-2">
                         <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 border border-emerald-800 text-white text-xs font-semibold px-3 py-1.5 rounded transition flex items-center gap-1.5">
@@ -477,11 +424,11 @@
                 </div>
 
                 <div class="p-4">
-                    <div class="flex justify-between items-center mb-4 text-xs font-medium text-slate-600 no-print">
+                    <div class="flex flex-wrap justify-between items-center gap-2 mb-4 text-xs font-medium text-slate-600 no-print">
                         <div>Period: <span id="recapMonthSubtitle" class="font-bold text-platinum-dark">Memuat...</span></div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                             <span>Filter:</span>
-                            <select id="recapCategoryFilter" onchange="renderRecapTable()" class="grid-input w-48 text-left py-1">
+                            <select id="recapCategoryFilter" onchange="renderRecapTable()" class="grid-input w-full sm:w-48 text-left py-1">
                                 <option value="ALL">All Categories</option>
                                 <option value="Spirits">Spirits</option>
                                 <option value="Wine">Wine</option>
@@ -493,8 +440,8 @@
                         </div>
                     </div>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-[12px] border border-slate-300">
+                    <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
+                        <table class="w-full text-left border-collapse text-[12px] border border-slate-300 table-responsive min-w-[800px]">
                             <thead>
                                 <tr class="bg-platinum-panel text-white">
                                     <th class="py-2 px-2 border border-slate-600 font-medium">Item Description</th>
@@ -560,7 +507,7 @@
         </div>
     </div>
 
-    <!-- JavaScript Application Code -->
+    <!-- JavaScript Application Code (TIDAK ADA YANG DIUBAH) -->
     <script>
         const DEFAULT_ITEMS = [
             { id: 'item_1', name: 'Johnnie Walker Black Label', category: 'Spirits', bottleSizeMl: 750 },

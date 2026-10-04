@@ -4,46 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FBM Rooftop Inventory</title>
+    <!-- Menggunakan Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Menghilangkan scrollbar pada elemen tertentu jika diperlukan, namun tetap bisa di-scroll */
-        .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        /* Sembunyikan scrollbar tapi tetap bisa di-scroll agar terlihat bersih */
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        /* Warna kustom sesuai gambar asli */
+        .bg-dark-header { background-color: #17202e; }
+        .text-orange-custom { color: #f97316; }
+        .bg-orange-custom { background-color: #f97316; }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-sm text-slate-800">
+<body class="bg-gray-100 font-sans text-sm text-gray-800">
 
-    <!-- Header Bagian Atas -->
-    <header class="bg-slate-900 text-white p-3">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+    <!-- 1. HEADER (Rapi di HP & Desktop) -->
+    <header class="bg-dark-header text-white p-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            
             <!-- Judul Kiri -->
             <div class="flex items-center gap-3">
-                <div class="w-1.5 bg-white h-10 rounded-full"></div>
+                <div class="w-1.5 bg-white h-10"></div>
                 <div class="leading-tight">
-                    <div class="font-bold text-base tracking-wide">ROOFTOP PLATINUM</div>
-                    <div class="text-orange-500 text-xs font-semibold tracking-wider">CONVENTION BALIKPAPAN</div>
+                    <h1 class="font-bold text-lg tracking-wider uppercase">Rooftop Platinum</h1>
+                    <p class="text-orange-custom text-xs font-semibold tracking-wide uppercase">Convention Balikpapan</p>
                 </div>
             </div>
             
-            <!-- Tanggal & Tombol Aksi Kanan -->
+            <!-- Tanggal & Tombol Kanan -->
             <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-                <div class="flex items-center bg-slate-800 rounded px-2 py-1 gap-1 border border-slate-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                    <select class="bg-transparent text-white text-xs outline-none cursor-pointer"><option>04</option></select>
-                    <select class="bg-transparent text-white text-xs outline-none cursor-pointer"><option>Oktober</option></select>
-                    <select class="bg-transparent text-white text-xs outline-none cursor-pointer"><option>2026</option></select>
+                <div class="flex items-center bg-gray-800 border border-gray-700 rounded px-3 py-1.5 gap-2 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-custom" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    <span>04</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    <span>Oktober</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    <span>2026</span>
                 </div>
+                
                 <div class="flex items-center gap-2 ml-auto md:ml-0">
-                    <button class="bg-slate-700 hover:bg-slate-600 border border-slate-600 px-3 py-1.5 rounded text-xs flex items-center gap-1 transition-colors">
-                        <span class="text-orange-400">+</span> Master Item
+                    <button class="bg-gray-700 hover:bg-gray-600 border border-gray-600 px-3 py-1.5 rounded text-xs flex items-center gap-1 transition">
+                        <span class="text-gray-300">+</span> Master Item
                     </button>
-                    <button class="bg-orange-500 hover:bg-orange-600 px-3 py-1.5 rounded text-xs flex items-center gap-1 font-semibold transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                    <button class="bg-orange-custom hover:bg-orange-600 text-white font-semibold px-3 py-1.5 rounded text-xs flex items-center gap-1 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                         Simpan Data
                     </button>
                 </div>
@@ -51,188 +55,152 @@
         </div>
     </header>
 
-    <!-- Navigasi Menu Tabs -->
-    <div class="bg-slate-800 flex text-white text-xs overflow-x-auto hide-scrollbar">
-        <div class="bg-white text-slate-900 px-5 py-3 font-bold flex items-center gap-2 shrink-0 relative">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-            Dashboard
-            <!-- Indikator aktif di kiri (meniru gambar) -->
-            <div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-900"></div>
-        </div>
-        <div class="px-5 py-3 text-slate-300 hover:text-white cursor-pointer flex items-center gap-2 shrink-0 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
-            Opening Stock
-        </div>
-        <div class="px-5 py-3 text-slate-300 hover:text-white cursor-pointer flex items-center gap-2 shrink-0 transition-colors">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-            Store Requisition
-        </div>
-    </div>
-
-    <!-- Status Bar (Bawah Tab) -->
-    <div class="bg-white flex flex-wrap justify-between items-center px-4 py-2 border-b border-gray-200 text-[11px] gap-2">
-        <div class="flex items-center gap-1.5 w-full sm:w-auto">
-            <span class="relative flex h-2.5 w-2.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-            </span>
-            <span class="text-gray-500">System</span>
-            <span class="font-semibold text-emerald-600">Online</span>
-        </div>
-        <div class="flex items-center gap-1.5 w-full sm:w-auto">
-            <span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>
-            <span class="text-gray-500">Active Period:</span>
-            <span class="font-semibold text-gray-800">04 Oct 2026</span>
-        </div>
-        <div class="flex items-center gap-1.5 w-full sm:w-auto">
-            <span class="w-2.5 h-2.5 rounded-full bg-gray-300"></span>
-            <span class="text-gray-500">Backup DB</span>
+    <!-- 2. NAVIGASI TABS (Bisa digeser di HP) -->
+    <div class="bg-dark-header border-t border-gray-800 overflow-x-auto hide-scroll">
+        <div class="max-w-7xl mx-auto flex text-xs whitespace-nowrap">
+            <div class="bg-white text-gray-900 px-6 py-3 font-bold flex items-center gap-2 border-t-2 border-indigo-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                Dashboard
+            </div>
+            <div class="px-6 py-3 text-gray-400 hover:text-white cursor-pointer flex items-center gap-2 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" /></svg>
+                Opening Stock
+            </div>
+            <div class="px-6 py-3 text-gray-400 hover:text-white cursor-pointer flex items-center gap-2 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                Store Requisition
+            </div>
         </div>
     </div>
 
-    <!-- Konten Utama (Grid Kartu & Tabel) -->
-    <div class="p-3 md:p-4 max-w-7xl mx-auto space-y-4">
+    <!-- 3. STATUS BAR (Melipat rapi di HP) -->
+    <div class="bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 py-2 flex flex-wrap gap-4 text-xs">
+            <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span class="text-gray-500">System</span>
+                <span class="font-semibold text-emerald-600">Online</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>
+                <span class="text-gray-500">Active Period:</span>
+                <span class="font-semibold text-gray-800">04 Oct 2026</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-gray-300"></span>
+                <span class="text-gray-500">Backup DB</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. KONTEN UTAMA -->
+    <main class="max-w-7xl mx-auto px-4 py-6 space-y-6">
         
-        <!-- Grid 4 Kartu Summary -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <div class="bg-white p-3.5 rounded shadow-sm border-l-4 border-slate-300 flex justify-between items-center relative overflow-hidden">
+        <!-- Kartu Summary (Menjadi 1 kolom di HP, 4 kolom di Komputer) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Card 1 -->
+            <div class="bg-white p-4 shadow-sm border-l-4 border-gray-300 flex justify-between items-center relative overflow-hidden">
                 <div class="z-10">
-                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Total Master Item</div>
-                    <div class="text-2xl font-bold text-slate-800">8</div>
+                    <div class="text-[10px] font-bold text-gray-500 tracking-wider mb-1">TOTAL MASTER ITEM</div>
+                    <div class="text-2xl font-bold text-gray-800">8</div>
                 </div>
-                <div class="text-slate-200 opacity-50 absolute right-2 bottom-0 transform translate-y-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14" fill="currentColor" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 013 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.38v-6.71L5 9.21v6.7zM19 15.91v-6.7l-6 3.38v6.71l6-3.38z"/></svg>
+                <div class="text-gray-100 absolute right-2 bottom-0 transform translate-y-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16" fill="currentColor" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 013 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg>
                 </div>
             </div>
-            
-            <div class="bg-white p-3.5 rounded shadow-sm border-l-4 border-blue-500 flex justify-between items-center relative overflow-hidden">
+            <!-- Card 2 -->
+            <div class="bg-white p-4 shadow-sm border-l-4 border-blue-500 flex justify-between items-center relative overflow-hidden">
                 <div class="z-10">
-                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Store Req In (Vol)</div>
-                    <div class="text-2xl font-bold text-slate-800">0 ml</div>
+                    <div class="text-[10px] font-bold text-gray-500 tracking-wider mb-1">STORE REQ IN (VOL)</div>
+                    <div class="text-2xl font-bold text-gray-800">0 ml</div>
                 </div>
-                <div class="text-blue-100 absolute right-2 bottom-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                <div class="text-blue-50 absolute right-2 bottom-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
                 </div>
             </div>
-
-            <div class="bg-white p-3.5 rounded shadow-sm border-l-4 border-emerald-400 flex justify-between items-center relative overflow-hidden">
+            <!-- Card 3 -->
+            <div class="bg-white p-4 shadow-sm border-l-4 border-emerald-400 flex justify-between items-center relative overflow-hidden">
                 <div class="z-10">
-                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Sales POS Consumed</div>
-                    <div class="text-2xl font-bold text-slate-800">0 ml</div>
+                    <div class="text-[10px] font-bold text-gray-500 tracking-wider mb-1">SALES POS CONSUMED</div>
+                    <div class="text-2xl font-bold text-gray-800">0 ml</div>
                 </div>
-                <div class="text-emerald-100 absolute right-2 bottom-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                <div class="text-emerald-50 absolute right-2 bottom-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
                 </div>
             </div>
-
-            <div class="bg-white p-3.5 rounded shadow-sm border-l-4 border-red-400 flex justify-between items-center relative overflow-hidden">
+            <!-- Card 4 -->
+            <div class="bg-white p-4 shadow-sm border-l-4 border-red-400 flex justify-between items-center relative overflow-hidden">
                 <div class="z-10">
-                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Ent. & Spillage (Vol)</div>
-                    <div class="text-2xl font-bold text-slate-800">0 ml</div>
+                    <div class="text-[10px] font-bold text-gray-500 tracking-wider mb-1">ENT. & SPILLAGE (VOL)</div>
+                    <div class="text-2xl font-bold text-gray-800">0 ml</div>
                 </div>
-                <div class="text-red-100 absolute right-2 bottom-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                <div class="text-red-50 absolute right-2 bottom-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                 </div>
             </div>
         </div>
 
-        <!-- Tabel Live Variance Dashboard -->
-        <div class="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+        <!-- 5. TABEL DATA (Aman dari layar potong di HP Android) -->
+        <div class="bg-white shadow-sm border border-gray-200">
             <!-- Header Tabel -->
-            <div class="p-3 bg-gray-50 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
-                <div class="font-bold text-sm text-slate-800 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-500" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+            <div class="p-4 flex flex-wrap justify-between items-center gap-2 border-b border-gray-200">
+                <div class="font-bold text-gray-800 flex items-center gap-2 text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-custom" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
                     Live Variance Dashboard (ML)
                 </div>
-                <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase rounded-sm border border-emerald-200">
+                <div class="bg-green-100 text-green-700 px-2 py-1 text-[10px] font-bold tracking-wide uppercase border border-green-200 rounded-sm">
                     Real-time Calculation
-                </span>
+                </div>
             </div>
             
-            <!-- Wrapper Tabel Responsif -->
+            <!-- Wrapper Tabel Responsif: overflow-x-auto adalah kunci utama agar rapi di HP -->
             <div class="overflow-x-auto w-full">
-                <!-- min-w-max memastikan tabel tidak terhimpit di layar kecil -->
-                <table class="min-w-max w-full text-left border-collapse text-xs">
-                    <thead>
-                        <tr class="bg-slate-800 text-white divide-x divide-slate-700">
-                            <th class="p-3 font-semibold tracking-wide">Item Description</th>
-                            <th class="p-3 font-semibold tracking-wide text-center w-20">Size (ml)</th>
-                            <th class="p-3 font-semibold tracking-wide text-center w-20">Opening</th>
-                            <th class="p-3 font-semibold tracking-wide text-center w-20">SR In</th>
-                            <th class="p-3 font-semibold tracking-wide text-center w-20">Expected</th>
+                <!-- min-w-[700px] memaksa tabel tidak gepeng di layar kecil -->
+                <table class="w-full min-w-[700px] text-left border-collapse text-xs">
+                    <thead class="bg-dark-header text-white">
+                        <tr class="divide-x divide-gray-700">
+                            <th class="p-3 font-semibold">Item Description</th>
+                            <th class="p-3 font-semibold text-center w-24">Size (ml)</th>
+                            <th class="p-3 font-semibold text-center w-24">Opening</th>
+                            <th class="p-3 font-semibold text-center w-24">SR In</th>
+                            <th class="p-3 font-semibold text-center w-24">Expected</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-200 bg-white">
-                        <!-- Baris 1 -->
+                    <tbody class="divide-y divide-gray-200">
                         <tr class="hover:bg-gray-50 divide-x divide-gray-200">
-                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Johnnie Walker Black Label</td>
-                            <td class="p-3 text-center text-gray-600">750</td>
+                            <td class="p-3 text-gray-800">Johnnie Walker Black Label</td>
+                            <td class="p-3 text-center text-gray-500">750</td>
                             <td class="p-3 text-center text-gray-800">0</td>
-                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50">+0</td>
                             <td class="p-3 text-center text-gray-800">0</td>
                         </tr>
-                        <!-- Baris 2 -->
                         <tr class="hover:bg-gray-50 divide-x divide-gray-200">
-                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Hendrick's Gin</td>
-                            <td class="p-3 text-center text-gray-600">700</td>
+                            <td class="p-3 text-gray-800">Hendrick's Gin</td>
+                            <td class="p-3 text-center text-gray-500">700</td>
                             <td class="p-3 text-center text-gray-800">0</td>
-                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50">+0</td>
                             <td class="p-3 text-center text-gray-800">0</td>
                         </tr>
-                        <!-- Baris 3 -->
                         <tr class="hover:bg-gray-50 divide-x divide-gray-200">
-                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Absolut Vodka</td>
-                            <td class="p-3 text-center text-gray-600">750</td>
+                            <td class="p-3 text-gray-800">Absolut Vodka</td>
+                            <td class="p-3 text-center text-gray-500">750</td>
                             <td class="p-3 text-center text-gray-800">0</td>
-                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50">+0</td>
                             <td class="p-3 text-center text-gray-800">0</td>
                         </tr>
-                        <!-- Baris 4 -->
                         <tr class="hover:bg-gray-50 divide-x divide-gray-200">
-                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Jose Cuervo Reposado Tequila</td>
-                            <td class="p-3 text-center text-gray-600">750</td>
+                            <td class="p-3 text-gray-800">Jose Cuervo Reposado Tequila</td>
+                            <td class="p-3 text-center text-gray-500">750</td>
                             <td class="p-3 text-center text-gray-800">0</td>
-                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
-                            <td class="p-3 text-center text-gray-800">0</td>
-                        </tr>
-                        <!-- Baris 5 -->
-                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
-                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Penfolds Shiraz Red Wine</td>
-                            <td class="p-3 text-center text-gray-600">750</td>
-                            <td class="p-3 text-center text-gray-800">0</td>
-                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
-                            <td class="p-3 text-center text-gray-800">0</td>
-                        </tr>
-                        <!-- Baris 6 -->
-                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
-                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Heineken Beer</td>
-                            <td class="p-3 text-center text-gray-600">330</td>
-                            <td class="p-3 text-center text-gray-800">0</td>
-                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
-                            <td class="p-3 text-center text-gray-800">0</td>
-                        </tr>
-                        <!-- Baris 7 -->
-                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
-                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Monin Syrup Hazelnut</td>
-                            <td class="p-3 text-center text-gray-600">700</td>
-                            <td class="p-3 text-center text-gray-800">0</td>
-                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
-                            <td class="p-3 text-center text-gray-800">0</td>
-                        </tr>
-                        <!-- Baris 8 -->
-                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
-                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Coca Cola</td>
-                            <td class="p-3 text-center text-gray-600">330</td>
-                            <td class="p-3 text-center text-gray-800">0</td>
-                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50">+0</td>
                             <td class="p-3 text-center text-gray-800">0</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
-        <!-- Margin bawah agar saat scroll tidak mentok dengan batas bawah layar Android -->
-        <div class="h-6"></div>
-    </div>
+        
+    </main>
+
 </body>
 </html>

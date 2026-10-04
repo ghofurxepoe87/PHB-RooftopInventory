@@ -57,12 +57,9 @@
 
         /* --- TAMBAHAN KHUSUS UNTUK HP ANDROID & IPHONE --- */
         @media screen and (max-width: 768px) {
-            /* Kunci layar agar tidak bisa tergeser ke kanan */
             body, html { max-width: 100vw; overflow-x: hidden; }
-            /* Menyembunyikan scrollbar di menu tab agar terlihat rapi */
             .no-scrollbar::-webkit-scrollbar { display: none; }
             .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-            /* Memaksa elemen tabel agar tidak turun baris (hancur) di layar kecil */
             .table-responsive th, .table-responsive td { white-space: nowrap; }
         }
     </style>
@@ -72,7 +69,6 @@
     <!-- TOP HEADER BAR (VHP Style) -->
     <header class="bg-platinum-dark text-white border-b-4 border-platinum-gold no-print z-30 sticky top-0 vhp-shadow">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6">
-            <!-- Diubah: Dibuat auto-height (py-3) dan bisa melipat ke bawah (flex-wrap) di layar kecil -->
             <div class="flex flex-wrap items-center justify-between py-3 gap-3">
                 
                 <!-- Logo & Brand -->
@@ -90,7 +86,6 @@
 
                 <!-- Global Action & Date Selection -->
                 <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end">
-                    <!-- Date Picker Module -->
                     <div class="bg-platinum-panel border border-slate-700 rounded flex items-center px-2 py-1.5 text-sm shadow-inner flex-grow sm:flex-grow-0 justify-center">
                         <i class="fa-regular fa-calendar-days text-platinum-gold mr-2"></i>
                         <select id="daySelect" onchange="updateDayContext()" class="bg-transparent text-white font-bold outline-none cursor-pointer text-center mr-1"></select>
@@ -111,7 +106,6 @@
                         <select id="yearSelect" onchange="updateCalendarContext()" class="bg-transparent text-white font-medium outline-none cursor-pointer"></select>
                     </div>
 
-                    <!-- Buttons -->
                     <div class="flex items-center gap-2 flex-grow sm:flex-grow-0">
                         <button onclick="openAddItemModal()" class="flex-1 sm:flex-none bg-slate-700 hover:bg-slate-600 border border-slate-500 text-white font-medium px-3 py-1.5 rounded text-xs sm:text-sm transition flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-plus text-platinum-gold"></i> Master Item
@@ -124,7 +118,7 @@
             </div>
         </div>
 
-        <!-- MODULE TABS (VHP Style) - Ditambahkan flex-nowrap dan shrink-0 agar tidak bertumpuk -->
+        <!-- MODULE TABS -->
         <div class="bg-platinum-panel pt-2 px-2 sm:px-6 max-w-[1400px] mx-auto flex space-x-1 overflow-x-auto no-scrollbar flex-nowrap" style="-webkit-overflow-scrolling: touch;">
             <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn active shrink-0 px-4 py-2 text-sm font-bold bg-white text-platinum-dark border-t-2 border-platinum-gold rounded-t flex items-center gap-2">
                 <i class="fa-solid fa-chart-bar"></i> Dashboard
@@ -175,7 +169,6 @@
 
         <!-- SECTION 1: DASHBOARD -->
         <section id="view-dashboard" class="view-section space-y-4">
-            <!-- KPI Cards -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div class="bg-white p-3 sm:p-4 rounded vhp-shadow border-l-4 border-slate-500 flex items-center justify-between">
                     <div><p class="text-[9px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide">Total Master Item</p><h3 class="text-xl sm:text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalItems">0</h3></div>
@@ -195,15 +188,13 @@
                 </div>
             </div>
 
-            <!-- Datagrid -->
             <div class="bg-white rounded vhp-shadow border border-slate-300 flex flex-col">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex flex-wrap justify-between items-center gap-2 rounded-t">
                     <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-table text-platinum-gold"></i> Live Variance Dashboard (ML)</h2>
                     <span class="text-[10px] sm:text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">Real-time Calculation</span>
                 </div>
                 <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
-                    <!-- Ditambahkan class table-responsive -->
-                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300 table-responsive min-w-[700px]">
+                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300 table-responsive min-w-[850px]">
                         <thead>
                             <tr class="bg-platinum-panel text-white">
                                 <th class="py-2 px-3 border border-slate-600 font-medium">Item Description</th>
@@ -212,7 +203,8 @@
                                 <th class="py-2 px-3 border border-slate-600 text-center font-medium w-24">SR In</th>
                                 <th class="py-2 px-3 border border-slate-600 text-center font-medium bg-slate-700 w-28">Expected</th>
                                 <th class="py-2 px-3 border border-slate-600 text-center font-medium bg-blue-900 w-28">Closing</th>
-                                <th class="py-2 px-3 border border-slate-600 text-center font-medium bg-slate-900 w-28">Variance</th>
+                                <th class="py-2 px-3 border border-slate-600 text-center font-medium bg-slate-900 w-24">Variance</th>
+                                <th class="py-2 px-3 border border-slate-600 text-center font-bold bg-slate-800 w-28 text-platinum-gold">Status</th>
                             </tr>
                         </thead>
                         <tbody id="dashboardSummaryTable" class="bg-white"></tbody>
@@ -278,7 +270,7 @@
                     <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-clipboard-check text-platinum-gold"></i> Physical Closing Count & Variance Analysis</h2>
                 </div>
                 <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
-                    <table class="w-full text-left border-collapse text-[12px] border border-slate-300 table-responsive min-w-[900px]">
+                    <table class="w-full text-left border-collapse text-[12px] border border-slate-300 table-responsive min-w-[1000px]">
                         <thead>
                             <tr class="bg-platinum-panel text-white">
                                 <th class="py-2 px-2 border border-slate-600 font-medium">Item Name</th>
@@ -290,7 +282,8 @@
                                 <th class="py-2 px-2 border border-slate-600 text-center font-medium text-emerald-400">POS Sales</th>
                                 <th class="py-2 px-2 border border-slate-600 text-center font-bold bg-blue-900">Expected</th>
                                 <th class="py-2 px-2 border border-slate-600 text-center font-medium w-32">Phy. Closing (ml)</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-bold bg-slate-900 w-24">Variance</th>
+                                <th class="py-2 px-2 border border-slate-600 text-center font-bold bg-slate-900 w-20">Variance</th>
+                                <th class="py-2 px-2 border border-slate-600 text-center font-bold bg-slate-800 w-28 text-platinum-gold">Status</th>
                             </tr>
                         </thead>
                         <tbody id="closingTable"></tbody>
@@ -507,7 +500,7 @@
         </div>
     </div>
 
-    <!-- JavaScript Application Code (TIDAK ADA YANG DIUBAH) -->
+    <!-- JAVASCRIPT LOGIC DENGAN FITUR STATUS ALERT -->
     <script>
         const DEFAULT_ITEMS = [
             { id: 'item_1', name: 'Johnnie Walker Black Label', category: 'Spirits', bottleSizeMl: 750 },
@@ -654,6 +647,17 @@
             if (rem === 0) return `${btl} Btl`;
             return `${btl} Btl + ${rem}ml`;
         }
+        
+        // FUNGSI UNTUK MENDAPATKAN BADGE STATUS STOK
+        function getStockStatusBadge(closingMl, bottleSizeMl) {
+            if (closingMl <= 0) {
+                return '<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-red-200 block w-full">Kosong (SR!)</span>';
+            } else if (closingMl <= bottleSizeMl) {
+                return '<span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-orange-200 block w-full">Menipis</span>';
+            } else {
+                return '<span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-emerald-200 block w-full">Aman</span>';
+            }
+        }
 
         function renderDashboard() {
             const rec = inventoryData[getDateKey()];
@@ -682,6 +686,7 @@
                 const exp = op + sr - spill - ent - pos;
                 const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
                 const variance = cl - exp;
+                const statusHtml = getStockStatusBadge(cl, item.bottleSizeMl);
 
                 const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
                 tbody.innerHTML += `
@@ -693,6 +698,7 @@
                         <td class="py-2 px-3 border border-slate-300 text-center bg-slate-100">${exp}</td>
                         <td class="py-2 px-3 border border-slate-300 text-center font-bold text-blue-900 bg-blue-50">${cl}</td>
                         <td class="py-2 px-3 border border-slate-300 text-center font-bold ${variance < 0 ? 'text-red-600 bg-red-50' : 'text-emerald-700'}">${variance}</td>
+                        <td class="py-2 px-3 border border-slate-300 text-center">${statusHtml}</td>
                     </tr>`;
             });
         }
@@ -763,6 +769,7 @@
                 const exp = op + sr - spl - ent - pos;
                 const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
                 const vari = cl - exp;
+                const statusHtml = getStockStatusBadge(cl, item.bottleSizeMl);
                 const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
                 
                 tbody.innerHTML += `
@@ -777,6 +784,7 @@
                         <td class="py-1.5 px-2 border border-slate-300 text-center font-bold text-blue-900 bg-blue-50">${exp}</td>
                         <td class="py-1.5 px-2 border border-slate-300 text-center"><input type="number" value="${cl}" onchange="updateCls('${item.id}', this.value)" class="grid-input bg-yellow-50 border-yellow-400"></td>
                         <td class="py-1.5 px-2 border border-slate-300 text-center font-bold ${vari < 0 ? 'text-red-600 bg-red-50' : 'text-slate-800'}">${vari}</td>
+                        <td class="py-1.5 px-2 border border-slate-300 text-center">${statusHtml}</td>
                     </tr>`;
             });
         }
@@ -885,7 +893,7 @@
 
         function exportToCSV() {
             let csv = `Report Inventory ML\nName,Cat,Size,Opn,SR,Spill,Ent,POS,Cls,Var\n`;
-            masterItems.forEach(i => csv += `"${i.name}","${i.category}",${i.bottleSizeMl},0,0,0,0,0,0,0\n`); // Simplified for brevity in this snippet
+            masterItems.forEach(i => csv += `"${i.name}","${i.category}",${i.bottleSizeMl},0,0,0,0,0,0,0\n`);
             const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
             a.download = `VHP_Bar_Export_${currentYear}.csv`; a.click();
         }

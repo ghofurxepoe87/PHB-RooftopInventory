@@ -1,5 +1,27 @@
 <!DOCTYPE html>
 <html lang="id">
+    <style>
+  /* KODE KHUSUS UNTUK MERAPIKAN TAMPILAN DI HP ANDROID & IPHONE */
+  @media screen and (max-width: 768px) {
+    /* Cegah layar HP tergeser ke kanan kosong */
+    body, html {
+      overflow-x: hidden !important;
+      max-width: 100vw !important;
+    }
+    /* Paksa tabel agar bisa digeser (swipe) ke kiri/kanan */
+    table {
+      display: block !important;
+      width: 100% !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      white-space: nowrap !important;
+    }
+    /* Memastikan menu atas (header & tombol) mau turun ke bawah dan tidak bertumpuk */
+    header, .flex, [style*="display: flex"] {
+      flex-wrap: wrap !important;
+    }
+  }
+</style>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -22,6 +22,51 @@
     }
   }
 </style>
+    <style>
+/* KODE PENYEMPURNA LAYAR HP ANDROID & IPHONE */
+@media screen and (max-width: 768px) {
+    /* 1. Mencegah seluruh layar geser ke kanan */
+    body, html {
+        overflow-x: hidden !important;
+        width: 100% !important;
+    }
+
+    /* 2. MENYELESAIKAN MENU NAVIGASI BERTUMPUK (Jadikan horizontal scroll) */
+    nav, ul, .nav, .tabs, [class*="menu"], [class*="tab"] {
+        display: flex !important;
+        flex-wrap: nowrap !important; /* Paksa 1 baris */
+        overflow-x: auto !important; /* Bisa digeser */
+        -webkit-overflow-scrolling: touch !important; /* Geser mulus di HP */
+        padding-bottom: 5px !important;
+    }
+    
+    /* Pastikan tombol menu tidak gepeng */
+    nav > *, ul > *, .nav > *, .tabs > *, [class*="menu"] > *, [class*="tab"] > * {
+        flex: 0 0 auto !important;
+        white-space: nowrap !important;
+    }
+
+    /* Sembunyikan garis scrollbar agar bersih */
+    nav::-webkit-scrollbar, ul::-webkit-scrollbar, [class*="menu"]::-webkit-scrollbar {
+        display: none !important;
+    }
+
+    /* 3. MENYELESAIKAN TEKS JUDUL BERTABRAKAN ("PAPAN") */
+    header, [class*="header"], [class*="title"], h1, h2, p, span {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+    }
+
+    /* 4. TABEL TETAP BISA DIGESER (Varian Dashboard) */
+    table {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
+    }
+}
+</style>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

@@ -3,882 +3,236 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rooftop Platinum Hotel Balikpapan - FBM Inventory System</title>
-    
-    <!-- Tailwind CSS CDN -->
+    <title>FBM Rooftop Inventory</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        const initTailwind = () => {
-            if (typeof tailwind !== 'undefined') {
-                tailwind.config = {
-                    theme: {
-                        extend: {
-                            colors: {
-                                platinum: {
-                                    gold: '#d97706',      // Amber 600
-                                    dark: '#0f172a',      // Slate 900
-                                    panel: '#1e293b',     // Slate 800
-                                    surface: '#f8fafc',   // Slate 50
-                                    grid: '#e2e8f0',      // Slate 200
-                                }
-                            }
-                        }
-                    }
-                };
-            } else {
-                setTimeout(initTailwind, 10);
-            }
-        };
-        initTailwind();
-    </script>
-    
-    <!-- Font Awesome & Google Fonts -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #e2e8f0; }
-        /* Scrollbar ala VHP */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; border-left: 1px solid #cbd5e1; }
-        ::-webkit-scrollbar-thumb { background: #94a3b8; }
-        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        
-        .vhp-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-        .grid-input { border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 2px; outline: none; transition: border-color 0.2s; width: 100%; text-align: center; font-weight: 600; color: #0f172a; }
-        .grid-input:focus { border-color: #d97706; box-shadow: 0 0 0 1px #d97706; }
-        
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; }
-            .vhp-shadow { box-shadow: none !important; border: none !important; }
+        /* Menghilangkan scrollbar pada elemen tertentu jika diperlukan, namun tetap bisa di-scroll */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
-<body class="text-slate-800 min-h-screen flex flex-col antialiased pb-12">
+<body class="bg-gray-100 font-sans text-sm text-slate-800">
 
-    <!-- TOP HEADER BAR (VHP Style) -->
-    <header class="bg-platinum-dark text-white border-b-4 border-platinum-gold no-print z-30 sticky top-0 vhp-shadow">
-        <div class="max-w-[1400px] mx-auto px-4 sm:px-6">
-            <div class="flex items-center justify-between h-16">
-                
-                <!-- Logo & Brand -->
-                <div class="flex items-center space-x-4">
-                    <div class="bg-white p-1.5 rounded shadow-sm border border-slate-300">
-                        <img src="logo.png" alt="Logo Platinum Hotel" class="h-8 w-auto object-contain">
-                    </div>
-                    <div class="flex flex-col">
-                        <h1 class="font-bold text-lg tracking-wide uppercase text-slate-100 flex items-center gap-2">
-                            Rooftop Platinum <span class="text-platinum-gold">Hotel & Convention Balikpapan</span>
-                        </h1>
-                        <span class="text-[10px] text-slate-400 tracking-widest font-semibold uppercase">FBM Inventory System Module v2.0</span>
-                    </div>
+    <!-- Header Bagian Atas -->
+    <header class="bg-slate-900 text-white p-3">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+            <!-- Judul Kiri -->
+            <div class="flex items-center gap-3">
+                <div class="w-1.5 bg-white h-10 rounded-full"></div>
+                <div class="leading-tight">
+                    <div class="font-bold text-base tracking-wide">ROOFTOP PLATINUM</div>
+                    <div class="text-orange-500 text-xs font-semibold tracking-wider">CONVENTION BALIKPAPAN</div>
                 </div>
-
-                <!-- Global Action & Date Selection -->
-                <div class="flex items-center space-x-3">
-                    <!-- Date Picker Module -->
-                    <div class="bg-platinum-panel border border-slate-700 rounded flex items-center px-2 py-1 text-sm shadow-inner">
-                        <i class="fa-regular fa-calendar-days text-platinum-gold mr-2"></i>
-                        <select id="daySelect" onchange="updateDayContext()" class="bg-transparent text-white font-bold outline-none cursor-pointer text-center mr-1"></select>
-                        <select id="monthSelect" onchange="updateCalendarContext()" class="bg-transparent text-white font-medium outline-none cursor-pointer mr-1">
-                            <option value="0" class="bg-platinum-panel">Januari</option>
-                            <option value="1" class="bg-platinum-panel">Februari</option>
-                            <option value="2" class="bg-platinum-panel">Maret</option>
-                            <option value="3" class="bg-platinum-panel">April</option>
-                            <option value="4" class="bg-platinum-panel">Mei</option>
-                            <option value="5" class="bg-platinum-panel">Juni</option>
-                            <option value="6" class="bg-platinum-panel">Juli</option>
-                            <option value="7" class="bg-platinum-panel">Agustus</option>
-                            <option value="8" class="bg-platinum-panel">September</option>
-                            <option value="9" class="bg-platinum-panel">Oktober</option>
-                            <option value="10" class="bg-platinum-panel">November</option>
-                            <option value="11" class="bg-platinum-panel">Desember</option>
-                        </select>
-                        <select id="yearSelect" onchange="updateCalendarContext()" class="bg-transparent text-white font-medium outline-none cursor-pointer"></select>
-                    </div>
-
-                    <!-- New Item Button -->
-                    <button onclick="openAddItemModal()" class="bg-slate-700 hover:bg-slate-600 border border-slate-500 text-white font-medium px-3 py-1.5 rounded text-sm transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-plus text-platinum-gold"></i> Master Item
+            </div>
+            
+            <!-- Tanggal & Tombol Aksi Kanan -->
+            <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                <div class="flex items-center bg-slate-800 rounded px-2 py-1 gap-1 border border-slate-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    <select class="bg-transparent text-white text-xs outline-none cursor-pointer"><option>04</option></select>
+                    <select class="bg-transparent text-white text-xs outline-none cursor-pointer"><option>Oktober</option></select>
+                    <select class="bg-transparent text-white text-xs outline-none cursor-pointer"><option>2026</option></select>
+                </div>
+                <div class="flex items-center gap-2 ml-auto md:ml-0">
+                    <button class="bg-slate-700 hover:bg-slate-600 border border-slate-600 px-3 py-1.5 rounded text-xs flex items-center gap-1 transition-colors">
+                        <span class="text-orange-400">+</span> Master Item
                     </button>
-                    
-                    <!-- Save Button -->
-                    <button onclick="manualSaveWithFeedback()" class="bg-platinum-gold hover:bg-amber-500 text-white font-bold px-4 py-1.5 rounded text-sm transition flex items-center gap-1.5 shadow-md">
-                        <i class="fa-solid fa-floppy-disk"></i> Simpan Data
+                    <button class="bg-orange-500 hover:bg-orange-600 px-3 py-1.5 rounded text-xs flex items-center gap-1 font-semibold transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" /></svg>
+                        Simpan Data
                     </button>
                 </div>
             </div>
-        </div>
-
-        <!-- MODULE TABS (VHP Style) -->
-        <div class="bg-platinum-panel pt-2 px-4 sm:px-6 max-w-[1400px] mx-auto flex space-x-1 overflow-x-auto no-scrollbar">
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn active px-4 py-2 text-sm font-bold bg-white text-platinum-dark border-t-2 border-platinum-gold rounded-t flex items-center gap-2">
-                <i class="fa-solid fa-chart-bar"></i> Dashboard
-            </button>
-            <button onclick="switchTab('opening')" id="tab-opening" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
-                <i class="fa-solid fa-box-open"></i> Opening Stock
-            </button>
-            <button onclick="switchTab('sr')" id="tab-sr" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
-                <i class="fa-solid fa-truck-ramp-box"></i> Store Requisition
-            </button>
-            <button onclick="switchTab('closing')" id="tab-closing" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
-                <i class="fa-solid fa-clipboard-check"></i> Physical Closing
-            </button>
-            <button onclick="switchTab('modifier')" id="tab-modifier" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
-                <i class="fa-solid fa-cocktail"></i> Spillage / Modifier
-            </button>
-            <button onclick="switchTab('entertainment')" id="tab-entertainment" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
-                <i class="fa-solid fa-glass-cheers"></i> Entertainment
-            </button>
-            <button onclick="switchTab('recap')" id="tab-recap" class="nav-btn px-4 py-2 text-sm font-medium bg-slate-700 text-slate-300 hover:bg-slate-600 rounded-t flex items-center gap-2">
-                <i class="fa-solid fa-print"></i> Report / Recap
-            </button>
         </div>
     </header>
 
-    <!-- SYSTEM STATUS BAR -->
-    <div class="bg-white border-b border-slate-300 text-xs px-4 sm:px-6 py-2 shadow-sm max-w-[1400px] mx-auto w-full flex justify-between items-center text-slate-500 font-medium">
-        <div class="flex items-center gap-4">
-            <span class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-500"></div> System Online</span>
-            <span class="border-l border-slate-300 pl-4 flex items-center gap-1.5"><i class="fa-solid fa-folder-open text-amber-500"></i> Active Period: <span id="activeDateDisplay" class="text-platinum-dark font-bold">Memuat...</span></span>
+    <!-- Navigasi Menu Tabs -->
+    <div class="bg-slate-800 flex text-white text-xs overflow-x-auto hide-scrollbar">
+        <div class="bg-white text-slate-900 px-5 py-3 font-bold flex items-center gap-2 shrink-0 relative">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+            Dashboard
+            <!-- Indikator aktif di kiri (meniru gambar) -->
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-slate-900"></div>
         </div>
-        <button onclick="exportJSONBackup()" class="hover:text-platinum-dark flex items-center gap-1">
-            <i class="fa-solid fa-database"></i> Backup DB
-        </button>
-    </div>
-
-    <!-- MAIN WORKSPACE -->
-    <main class="max-w-[1400px] mx-auto px-4 sm:px-6 mt-4 flex-1 w-full">
-
-        <!-- Notification Toast -->
-        <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-10 opacity-0 transition-all duration-300 bg-platinum-dark text-white px-4 py-3 rounded shadow-xl flex items-center gap-3 border-l-4 border-emerald-500 pointer-events-none">
-            <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
-            <div>
-                <p class="text-sm font-bold" id="toastTitle">Berhasil</p>
-                <p class="text-xs text-slate-300" id="toastMessage">Data tersimpan</p>
-            </div>
+        <div class="px-5 py-3 text-slate-300 hover:text-white cursor-pointer flex items-center gap-2 shrink-0 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+            Opening Stock
         </div>
-
-        <!-- SECTION 1: DASHBOARD -->
-        <section id="view-dashboard" class="view-section space-y-4">
-            <!-- KPI Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-4 rounded vhp-shadow border-l-4 border-slate-500 flex items-center justify-between">
-                    <div><p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Total Master Item</p><h3 class="text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalItems">0</h3></div>
-                    <div class="text-slate-300"><i class="fa-solid fa-boxes-stacked text-3xl"></i></div>
-                </div>
-                <div class="bg-white p-4 rounded vhp-shadow border-l-4 border-blue-500 flex items-center justify-between">
-                    <div><p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Store Req In (Vol)</p><h3 class="text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalSR">0 ml</h3></div>
-                    <div class="text-blue-100"><i class="fa-solid fa-dolly text-3xl"></i></div>
-                </div>
-                <div class="bg-white p-4 rounded vhp-shadow border-l-4 border-emerald-500 flex items-center justify-between">
-                    <div><p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Sales POS Consumed</p><h3 class="text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalConsumed">0 ml</h3></div>
-                    <div class="text-emerald-100"><i class="fa-solid fa-cash-register text-3xl"></i></div>
-                </div>
-                <div class="bg-white p-4 rounded vhp-shadow border-l-4 border-red-500 flex items-center justify-between">
-                    <div><p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Ent. & Spillage (Vol)</p><h3 class="text-2xl font-bold text-platinum-dark mt-1" id="kpiTotalEnt">0 ml</h3></div>
-                    <div class="text-red-100"><i class="fa-solid fa-wine-glass-empty text-3xl"></i></div>
-                </div>
-            </div>
-
-            <!-- Datagrid -->
-            <div class="bg-white rounded vhp-shadow border border-slate-300 flex flex-col">
-                <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
-                    <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-table text-platinum-gold"></i> Live Variance Dashboard (ML)</h2>
-                    <span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-2 py-1 rounded">Real-time Calculation</span>
-                </div>
-                <div class="overflow-x-auto p-4">
-                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
-                        <thead>
-                            <tr class="bg-platinum-panel text-white">
-                                <th class="py-2 px-3 border border-slate-600 font-medium">Item Description</th>
-                                <th class="py-2 px-3 border border-slate-600 text-center font-medium w-24">Size (ml)</th>
-                                <th class="py-2 px-3 border border-slate-600 text-center font-medium w-24">Opening</th>
-                                <th class="py-2 px-3 border border-slate-600 text-center font-medium w-24">SR In</th>
-                                <th class="py-2 px-3 border border-slate-600 text-center font-medium bg-slate-700 w-28">Expected</th>
-                                <th class="py-2 px-3 border border-slate-600 text-center font-medium bg-blue-900 w-28">Closing</th>
-                                <th class="py-2 px-3 border border-slate-600 text-center font-medium bg-slate-900 w-28">Variance</th>
-                            </tr>
-                        </thead>
-                        <tbody id="dashboardSummaryTable" class="bg-white"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 2: OPENING STOCK -->
-        <section id="view-opening" class="view-section hidden space-y-4">
-            <div class="bg-white rounded vhp-shadow border border-slate-300">
-                <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
-                    <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-box-open text-platinum-gold"></i> Opening Stock / Carry Forward</h2>
-                    <button onclick="copyClosingFromYesterday()" class="bg-platinum-panel hover:bg-slate-700 text-white text-xs font-medium px-3 py-1.5 rounded flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-clock-rotate-left text-platinum-gold"></i> Load Prev. Closing
-                    </button>
-                </div>
-                <div class="overflow-x-auto p-4">
-                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
-                        <thead>
-                            <tr class="bg-platinum-panel text-white">
-                                <th class="py-2 px-3 border border-slate-600 font-medium w-12 text-center">No</th>
-                                <th class="py-2 px-3 border border-slate-600 font-medium">Item Name</th>
-                                <th class="py-2 px-3 border border-slate-600 font-medium w-36">Category</th>
-                                <th class="py-2 px-3 border border-slate-600 font-medium w-36 text-center">Initial Volume (ml)</th>
-                                <th class="py-2 px-3 border border-slate-600 font-medium w-32 text-center">Btl Equiv.</th>
-                                <th class="py-2 px-3 border border-slate-600 font-medium w-16 text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="openingStockTable"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 3: STORE REQUISITION (SR) -->
-        <section id="view-sr" class="view-section hidden space-y-4">
-            <div class="bg-white rounded vhp-shadow border border-slate-300">
-                <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
-                    <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-truck-ramp-box text-platinum-gold"></i> Store Requisition (Goods Receiving)</h2>
-                </div>
-                <div class="overflow-x-auto p-4">
-                    <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
-                        <thead>
-                            <tr class="bg-platinum-panel text-white">
-                                <th class="py-2 px-3 border border-slate-600 font-medium">Item Description</th>
-                                <th class="py-2 px-3 border border-slate-600 font-medium w-48">SR / Doc Number</th>
-                                <th class="py-2 px-3 border border-slate-600 font-medium w-32 text-center">Qty (Bottles)</th>
-                                <th class="py-2 px-3 border border-slate-600 font-medium w-32 text-center">Total In (ml)</th>
-                                <th class="py-2 px-3 border border-slate-600 font-medium w-64">Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody id="srTable"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 4: CLOSING & VARIANCE -->
-        <section id="view-closing" class="view-section hidden space-y-4">
-            <div class="bg-white rounded vhp-shadow border border-slate-300">
-                <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
-                    <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-clipboard-check text-platinum-gold"></i> Physical Closing Count & Variance Analysis</h2>
-                </div>
-                <div class="overflow-x-auto p-4">
-                    <table class="w-full text-left border-collapse text-[12px] border border-slate-300">
-                        <thead>
-                            <tr class="bg-platinum-panel text-white">
-                                <th class="py-2 px-2 border border-slate-600 font-medium">Item Name</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-medium">Opn (ml)</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-medium">SR In</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-bold bg-slate-700">Tot Stock</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-medium text-amber-400">Mod/Spill</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-medium text-purple-400">Ent</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-medium text-emerald-400">POS Sales</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-bold bg-blue-900">Expected</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-medium w-32">Phy. Closing (ml)</th>
-                                <th class="py-2 px-2 border border-slate-600 text-center font-bold bg-slate-900 w-24">Variance</th>
-                            </tr>
-                        </thead>
-                        <tbody id="closingTable"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 5: MODIFIER & SPILLAGE -->
-        <section id="view-modifier" class="view-section hidden space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white rounded vhp-shadow border border-slate-300 h-fit">
-                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
-                        <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-plus-minus text-platinum-gold"></i> Form Modifier / Spillage</h2>
-                    </div>
-                    <form id="modifierForm" onsubmit="saveModifierLog(event)" class="p-4 space-y-3 text-[13px]">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Select Item</label>
-                            <select id="modItemSelect" class="w-full grid-input" required></select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Transaction Type</label>
-                            <select id="modType" class="w-full grid-input" required>
-                                <option value="Cocktail Modifier">Cocktail Modifier (Recipe)</option>
-                                <option value="Spillage / Waste">Spillage / Waste</option>
-                                <option value="Broken Bottle">Broken Bottle</option>
-                                <option value="Tasting / QC">Tasting / Quality Control</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Volume Used (ml)</label>
-                            <input type="number" step="1" id="modQty" class="w-full grid-input text-left" placeholder="e.g. 30" required>
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Description / Recipe Name</label>
-                            <input type="text" id="modNote" class="w-full grid-input text-left" placeholder="e.g. Negroni Mix" required>
-                        </div>
-                        <button type="submit" class="w-full bg-platinum-dark hover:bg-slate-800 text-white font-bold py-2 rounded transition border border-slate-900 mt-2">
-                            Post to Ledger
-                        </button>
-                    </form>
-                </div>
-
-                <div class="md:col-span-2 bg-white rounded vhp-shadow border border-slate-300">
-                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
-                        <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-list text-platinum-gold"></i> Spillage & Modifier Ledger</h2>
-                    </div>
-                    <div class="overflow-x-auto p-4">
-                        <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
-                            <thead>
-                                <tr class="bg-platinum-panel text-white">
-                                    <th class="py-2 px-3 border border-slate-600 font-medium">Item</th>
-                                    <th class="py-2 px-3 border border-slate-600 font-medium">Type</th>
-                                    <th class="py-2 px-3 border border-slate-600 text-center font-medium">Vol (ml)</th>
-                                    <th class="py-2 px-3 border border-slate-600 font-medium">Remarks</th>
-                                    <th class="py-2 px-3 border border-slate-600 text-center font-medium w-12">Del</th>
-                                </tr>
-                            </thead>
-                            <tbody id="modifierLogTable"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 6: ENTERTAINMENT -->
-        <section id="view-entertainment" class="view-section hidden space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white rounded vhp-shadow border border-slate-300 h-fit">
-                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
-                        <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-file-invoice text-platinum-gold"></i> Form Entertainment Voucher</h2>
-                    </div>
-                    <form id="entForm" onsubmit="saveEntertainmentLog(event)" class="p-4 space-y-3 text-[13px]">
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Select Item</label>
-                            <select id="entItemSelect" class="w-full grid-input" required></select>
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Volume Comp'd (ml)</label>
-                            <input type="number" step="1" id="entQty" class="w-full grid-input text-left" placeholder="e.g. 750" required>
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">Authorized By</label>
-                            <input type="text" id="entApprovedBy" class="w-full grid-input text-left" placeholder="e.g. FBM / GM" required>
-                        </div>
-                        <div>
-                            <label class="block font-semibold text-slate-700 mb-1">VIP Name / Purpose</label>
-                            <input type="text" id="entNote" class="w-full grid-input text-left" placeholder="e.g. Owner Table" required>
-                        </div>
-                        <button type="submit" class="w-full bg-platinum-dark hover:bg-slate-800 text-white font-bold py-2 rounded transition border border-slate-900 mt-2">
-                            Post to Ledger
-                        </button>
-                    </form>
-                </div>
-
-                <div class="md:col-span-2 bg-white rounded vhp-shadow border border-slate-300">
-                    <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
-                        <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-list text-platinum-gold"></i> Entertainment Ledger</h2>
-                    </div>
-                    <div class="overflow-x-auto p-4">
-                        <table class="w-full text-left border-collapse text-[13px] border border-slate-300">
-                            <thead>
-                                <tr class="bg-platinum-panel text-white">
-                                    <th class="py-2 px-3 border border-slate-600 font-medium">Item</th>
-                                    <th class="py-2 px-3 border border-slate-600 text-center font-medium">Vol (ml)</th>
-                                    <th class="py-2 px-3 border border-slate-600 font-medium">Auth By</th>
-                                    <th class="py-2 px-3 border border-slate-600 font-medium">Purpose</th>
-                                    <th class="py-2 px-3 border border-slate-600 text-center font-medium w-12">Del</th>
-                                </tr>
-                            </thead>
-                            <tbody id="entLogTable"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION 7: MONTHLY RECAP -->
-        <section id="view-recap" class="view-section hidden space-y-4">
-            <div class="bg-white rounded vhp-shadow border border-slate-300 print-card">
-                <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t no-print">
-                    <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-file-excel text-platinum-gold"></i> Monthly Recap Report</h2>
-                    <div class="flex gap-2">
-                        <button onclick="exportToCSV()" class="bg-emerald-600 hover:bg-emerald-700 border border-emerald-800 text-white text-xs font-semibold px-3 py-1.5 rounded transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-download"></i> CSV
-                        </button>
-                        <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-800 border border-slate-900 text-white text-xs font-semibold px-3 py-1.5 rounded transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-print"></i> Print
-                        </button>
-                    </div>
-                </div>
-
-                <div class="p-4">
-                    <div class="flex justify-between items-center mb-4 text-xs font-medium text-slate-600 no-print">
-                        <div>Period: <span id="recapMonthSubtitle" class="font-bold text-platinum-dark">Memuat...</span></div>
-                        <div class="flex items-center gap-2">
-                            <span>Filter:</span>
-                            <select id="recapCategoryFilter" onchange="renderRecapTable()" class="grid-input w-48 text-left py-1">
-                                <option value="ALL">All Categories</option>
-                                <option value="Spirits">Spirits</option>
-                                <option value="Wine">Wine</option>
-                                <option value="Beer">Beer</option>
-                                <option value="Liqueur">Liqueur</option>
-                                <option value="Soft Drinks">Soft Drinks</option>
-                                <option value="Syrups & Flavors">Syrups & Flavors</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse text-[12px] border border-slate-300">
-                            <thead>
-                                <tr class="bg-platinum-panel text-white">
-                                    <th class="py-2 px-2 border border-slate-600 font-medium">Item Description</th>
-                                    <th class="py-2 px-2 border border-slate-600 text-center font-medium">Btl Size</th>
-                                    <th class="py-2 px-2 border border-slate-600 text-center font-medium bg-slate-700">Mth Open</th>
-                                    <th class="py-2 px-2 border border-slate-600 text-center font-medium">Tot SR In</th>
-                                    <th class="py-2 px-2 border border-slate-600 text-center font-medium">Tot Spill</th>
-                                    <th class="py-2 px-2 border border-slate-600 text-center font-medium">Tot Ent</th>
-                                    <th class="py-2 px-2 border border-slate-600 text-center font-medium">Tot POS</th>
-                                    <th class="py-2 px-2 border border-slate-600 text-center font-bold bg-blue-900">Mth Closing</th>
-                                    <th class="py-2 px-2 border border-slate-600 text-center font-bold bg-slate-900">Tot Variance</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recapTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- MODAL: ADD MASTER ITEM -->
-    <div id="addItemModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
-        <div class="bg-white rounded-md max-w-md w-full shadow-2xl border border-slate-300 flex flex-col">
-            <div class="bg-platinum-panel px-4 py-3 flex justify-between items-center rounded-t-md">
-                <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-database text-platinum-gold"></i> Add Master Item</h3>
-                <button onclick="closeAddItemModal()" class="text-slate-300 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-
-            <form onsubmit="handleAddNewItem(event)" class="p-5 space-y-4 text-[13px]">
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Item Description</label>
-                    <input type="text" id="newItemName" class="grid-input text-left" placeholder="e.g. Macallan 12 Years" required>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Category</label>
-                        <select id="newItemCategory" class="grid-input text-left">
-                            <option value="Spirits">Spirits</option>
-                            <option value="Wine">Wine</option>
-                            <option value="Beer">Beer</option>
-                            <option value="Liqueur">Liqueur</option>
-                            <option value="Soft Drinks">Soft Drinks</option>
-                            <option value="Syrups & Flavors">Syrups & Flavors</option>
-                            <option value="Others">Others</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-semibold text-slate-700 mb-1">Bottle Size (ml)</label>
-                        <input type="number" id="newItemCapacity" class="grid-input text-left" value="750" required>
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-semibold text-slate-700 mb-1">Initial Stock (Whole Bottles)</label>
-                    <input type="number" step="0.1" id="newItemInitialBottles" class="grid-input text-left" value="0" required>
-                </div>
-                <div class="pt-4 flex justify-end gap-2 border-t border-slate-200">
-                    <button type="button" onclick="closeAddItemModal()" class="px-4 py-1.5 border border-slate-300 rounded font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
-                    <button type="submit" class="px-4 py-1.5 bg-platinum-dark text-white rounded font-bold hover:bg-slate-800 border border-slate-900">Save Item</button>
-                </div>
-            </form>
+        <div class="px-5 py-3 text-slate-300 hover:text-white cursor-pointer flex items-center gap-2 shrink-0 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+            Store Requisition
         </div>
     </div>
 
-    <!-- JavaScript Application Code -->
-    <script>
-        const DEFAULT_ITEMS = [
-            { id: 'item_1', name: 'Johnnie Walker Black Label', category: 'Spirits', bottleSizeMl: 750 },
-            { id: 'item_2', name: 'Hendrick\'s Gin', category: 'Spirits', bottleSizeMl: 700 },
-            { id: 'item_3', name: 'Absolut Vodka', category: 'Spirits', bottleSizeMl: 750 },
-            { id: 'item_4', name: 'Jose Cuervo Reposado Tequila', category: 'Spirits', bottleSizeMl: 750 },
-            { id: 'item_5', name: 'Penfolds Shiraz Red Wine', category: 'Wine', bottleSizeMl: 750 },
-            { id: 'item_6', name: 'Heineken Beer', category: 'Beer', bottleSizeMl: 330 },
-            { id: 'item_7', name: 'Monin Syrup Hazelnut', category: 'Syrups & Flavors', bottleSizeMl: 700 },
-            { id: 'item_8', name: 'Coca Cola', category: 'Soft Drinks', bottleSizeMl: 330 }
-        ];
+    <!-- Status Bar (Bawah Tab) -->
+    <div class="bg-white flex flex-wrap justify-between items-center px-4 py-2 border-b border-gray-200 text-[11px] gap-2">
+        <div class="flex items-center gap-1.5 w-full sm:w-auto">
+            <span class="relative flex h-2.5 w-2.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+            </span>
+            <span class="text-gray-500">System</span>
+            <span class="font-semibold text-emerald-600">Online</span>
+        </div>
+        <div class="flex items-center gap-1.5 w-full sm:w-auto">
+            <span class="w-2.5 h-2.5 rounded-full bg-orange-400"></span>
+            <span class="text-gray-500">Active Period:</span>
+            <span class="font-semibold text-gray-800">04 Oct 2026</span>
+        </div>
+        <div class="flex items-center gap-1.5 w-full sm:w-auto">
+            <span class="w-2.5 h-2.5 rounded-full bg-gray-300"></span>
+            <span class="text-gray-500">Backup DB</span>
+        </div>
+    </div>
 
-        let masterItems = [];
-        let currentYear = new Date().getFullYear();
-        let currentMonth = new Date().getMonth(); 
-        let currentDay = new Date().getDate();
-        let inventoryData = {};
-
-        window.onload = function() { initApp(); };
-
-        function initApp() {
-            loadLocalStorageData();
-            setupYearDropdown();
-            document.getElementById('monthSelect').value = currentMonth;
-            updateCalendarContext();
-            renderActiveTab();
-        }
-
-        function loadLocalStorageData() {
-            const savedItems = localStorage.getItem('bartrack_master_items_ml');
-            if (savedItems) masterItems = JSON.parse(savedItems);
-            else { masterItems = [...DEFAULT_ITEMS]; saveMasterItems(); }
-
-            const savedInventory = localStorage.getItem('bartrack_inventory_data_ml');
-            if (savedInventory) inventoryData = JSON.parse(savedInventory);
-        }
-
-        function saveMasterItems() { localStorage.setItem('bartrack_master_items_ml', JSON.stringify(masterItems)); }
-        function saveAllToLocalStorage() { localStorage.setItem('bartrack_inventory_data_ml', JSON.stringify(inventoryData)); }
-
-        function manualSaveWithFeedback() {
-            saveAllToLocalStorage();
-            showToast('Database Updated', 'Perubahan data berhasil disinkronkan ke local storage.');
-        }
-
-        function showToast(title, message) {
-            const toast = document.getElementById('toastNotification');
-            document.getElementById('toastTitle').textContent = title;
-            document.getElementById('toastMessage').textContent = message;
-            toast.classList.remove('translate-y-10', 'opacity-0');
-            setTimeout(() => toast.classList.add('translate-y-10', 'opacity-0'), 3000);
-        }
-
-        function setupYearDropdown() {
-            const yearSelect = document.getElementById('yearSelect');
-            yearSelect.innerHTML = '';
-            for (let y = currentYear - 1; y <= currentYear + 2; y++) {
-                const opt = document.createElement('option');
-                opt.value = y; opt.textContent = y; opt.className = 'bg-platinum-panel text-white';
-                if (y === currentYear) opt.selected = true;
-                yearSelect.appendChild(opt);
-            }
-        }
-
-        function getDaysInMonth(year, month) { return new Date(year, month + 1, 0).getDate(); }
-
-        function updateCalendarContext() {
-            currentMonth = parseInt(document.getElementById('monthSelect').value);
-            currentYear = parseInt(document.getElementById('yearSelect').value);
-            const totalDays = getDaysInMonth(currentYear, currentMonth);
-            const daySelect = document.getElementById('daySelect');
-            daySelect.innerHTML = '';
-            for (let d = 1; d <= totalDays; d++) {
-                const opt = document.createElement('option');
-                opt.value = d; opt.textContent = String(d).padStart(2, '0'); opt.className = 'bg-platinum-panel text-white';
-                if (d === currentDay) opt.selected = true;
-                daySelect.appendChild(opt);
-            }
-            if (currentDay > totalDays) currentDay = totalDays;
-            daySelect.value = currentDay;
-            updateDayContext();
-        }
-
-        function updateDayContext() {
-            currentDay = parseInt(document.getElementById('daySelect').value);
-            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            const formattedDate = `${String(currentDay).padStart(2, '0')} ${monthNames[currentMonth]} ${currentYear}`;
-            document.getElementById('activeDateDisplay').textContent = formattedDate;
-            initDateRecord(getDateKey());
-            renderActiveTab();
-        }
-
-        function getDateKey(day = currentDay, month = currentMonth, year = currentYear) {
-            return `${year}_${String(month + 1).padStart(2, '0')}_${String(day).padStart(2, '0')}`;
-        }
-
-        function getPreviousDayKey(day = currentDay, month = currentMonth, year = currentYear) {
-            const dateObj = new Date(year, month, day);
-            dateObj.setDate(dateObj.getDate() - 1);
-            return getDateKey(dateObj.getDate(), dateObj.getMonth(), dateObj.getFullYear());
-        }
-
-        function initDateRecord(key) {
-            if (!inventoryData[key]) inventoryData[key] = { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
-        }
-
-        function getEffectiveOpening(itemId, day = currentDay, month = currentMonth, year = currentYear) {
-            const key = getDateKey(day, month, year);
-            initDateRecord(key);
-            if (inventoryData[key].opening[itemId] !== undefined) return inventoryData[key].opening[itemId];
-            const prevKey = getPreviousDayKey(day, month, year);
-            if (inventoryData[prevKey] && inventoryData[prevKey].closing && inventoryData[prevKey].closing[itemId] !== undefined) {
-                return parseFloat(inventoryData[prevKey].closing[itemId]) || 0;
-            }
-            return 0;
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-white', 'text-platinum-dark', 'font-bold', 'border-t-2', 'border-platinum-gold');
-                btn.classList.add('bg-slate-700', 'text-slate-300', 'hover:bg-slate-600', 'font-medium');
-            });
-            const activeBtn = document.getElementById(`tab-${tabId}`);
-            if (activeBtn) {
-                activeBtn.classList.remove('bg-slate-700', 'text-slate-300', 'hover:bg-slate-600', 'font-medium');
-                activeBtn.classList.add('bg-white', 'text-platinum-dark', 'font-bold', 'border-t-2', 'border-platinum-gold');
-            }
-            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
-            const targetView = document.getElementById(`view-${tabId}`);
-            if (targetView) targetView.classList.remove('hidden');
-            renderActiveTab();
-        }
-
-        function renderActiveTab() {
-            initDateRecord(getDateKey());
-            renderDashboard(); renderOpeningStockTable(); renderSRTable();
-            renderClosingTable(); renderModifierTab(); renderEntertainmentTab(); renderRecapTable();
-        }
-
-        function formatBottleMl(ml, sizeMl) {
-            if (!sizeMl || sizeMl <= 0) return `${ml} ml`;
-            const btl = Math.floor(ml / sizeMl); const rem = Math.round(ml % sizeMl);
-            if (btl === 0) return `${rem} ml`;
-            if (rem === 0) return `${btl} Btl`;
-            return `${btl} Btl + ${rem}ml`;
-        }
-
-        function renderDashboard() {
-            const rec = inventoryData[getDateKey()];
-            document.getElementById('kpiTotalItems').textContent = masterItems.length;
+    <!-- Konten Utama (Grid Kartu & Tabel) -->
+    <div class="p-3 md:p-4 max-w-7xl mx-auto space-y-4">
+        
+        <!-- Grid 4 Kartu Summary -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div class="bg-white p-3.5 rounded shadow-sm border-l-4 border-slate-300 flex justify-between items-center relative overflow-hidden">
+                <div class="z-10">
+                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Total Master Item</div>
+                    <div class="text-2xl font-bold text-slate-800">8</div>
+                </div>
+                <div class="text-slate-200 opacity-50 absolute right-2 bottom-0 transform translate-y-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14" fill="currentColor" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18-.21 0-.41-.06-.57-.18l-7.9-4.44A.991.991 0 013 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18.21 0 .41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15zM5 15.91l6 3.38v-6.71L5 9.21v6.7zM19 15.91v-6.7l-6 3.38v6.71l6-3.38z"/></svg>
+                </div>
+            </div>
             
-            let totalSRMl = 0, totalConsumedMl = 0, totalEntSpillMl = 0;
-            Object.values(rec.sr || {}).forEach(val => totalSRMl += (parseFloat(val.totalMl) || 0));
-            masterItems.forEach(item => totalConsumedMl += (parseFloat(rec.closing[`${item.id}_pos`]) || 0));
-            (rec.modifiers || []).forEach(m => totalEntSpillMl += (parseFloat(m.qty) || 0));
-            (rec.entertainment || []).forEach(e => totalEntSpillMl += (parseFloat(e.qty) || 0));
+            <div class="bg-white p-3.5 rounded shadow-sm border-l-4 border-blue-500 flex justify-between items-center relative overflow-hidden">
+                <div class="z-10">
+                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Store Req In (Vol)</div>
+                    <div class="text-2xl font-bold text-slate-800">0 ml</div>
+                </div>
+                <div class="text-blue-100 absolute right-2 bottom-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                </div>
+            </div>
 
-            document.getElementById('kpiTotalSR').textContent = `${totalSRMl.toLocaleString()} ml`;
-            document.getElementById('kpiTotalConsumed').textContent = `${totalConsumedMl.toLocaleString()} ml`;
-            document.getElementById('kpiTotalEnt').textContent = `${totalEntSpillMl.toLocaleString()} ml`;
+            <div class="bg-white p-3.5 rounded shadow-sm border-l-4 border-emerald-400 flex justify-between items-center relative overflow-hidden">
+                <div class="z-10">
+                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Sales POS Consumed</div>
+                    <div class="text-2xl font-bold text-slate-800">0 ml</div>
+                </div>
+                <div class="text-emerald-100 absolute right-2 bottom-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+                </div>
+            </div>
 
-            const tbody = document.getElementById('dashboardSummaryTable');
-            tbody.innerHTML = '';
-            masterItems.forEach((item, idx) => {
-                const op = getEffectiveOpening(item.id);
-                const sr = parseFloat(rec.sr[item.id]?.totalMl) || 0;
-                let spill = 0, ent = 0;
-                (rec.modifiers || []).filter(m => m.itemId === item.id).forEach(m => spill += parseFloat(m.qty) || 0);
-                (rec.entertainment || []).filter(e => e.itemId === item.id).forEach(e => ent += parseFloat(e.qty) || 0);
-                const pos = parseFloat(rec.closing[`${item.id}_pos`]) || 0;
-                
-                const exp = op + sr - spill - ent - pos;
-                const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
-                const variance = cl - exp;
+            <div class="bg-white p-3.5 rounded shadow-sm border-l-4 border-red-400 flex justify-between items-center relative overflow-hidden">
+                <div class="z-10">
+                    <div class="text-[10px] text-gray-500 font-bold uppercase tracking-wider mb-1">Ent. & Spillage (Vol)</div>
+                    <div class="text-2xl font-bold text-slate-800">0 ml</div>
+                </div>
+                <div class="text-red-100 absolute right-2 bottom-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                </div>
+            </div>
+        </div>
 
-                const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
-                tbody.innerHTML += `
-                    <tr class="${bgClass} hover:bg-amber-50">
-                        <td class="py-2 px-3 border border-slate-300 font-semibold">${item.name}</td>
-                        <td class="py-2 px-3 border border-slate-300 text-center text-slate-500">${item.bottleSizeMl}</td>
-                        <td class="py-2 px-3 border border-slate-300 text-center">${op}</td>
-                        <td class="py-2 px-3 border border-slate-300 text-center font-semibold text-blue-700">+${sr}</td>
-                        <td class="py-2 px-3 border border-slate-300 text-center bg-slate-100">${exp}</td>
-                        <td class="py-2 px-3 border border-slate-300 text-center font-bold text-blue-900 bg-blue-50">${cl}</td>
-                        <td class="py-2 px-3 border border-slate-300 text-center font-bold ${variance < 0 ? 'text-red-600 bg-red-50' : 'text-emerald-700'}">${variance}</td>
-                    </tr>`;
-            });
-        }
-
-        function renderOpeningStockTable() {
-            const key = getDateKey(); const prevKey = getPreviousDayKey();
-            const tbody = document.getElementById('openingStockTable'); tbody.innerHTML = '';
-            masterItems.forEach((item, idx) => {
-                const valMl = getEffectiveOpening(item.id);
-                const isAuto = inventoryData[key].opening[item.id] === undefined && inventoryData[prevKey]?.closing?.[item.id] !== undefined;
-                const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
-                tbody.innerHTML += `
-                    <tr class="${bgClass} hover:bg-amber-50">
-                        <td class="py-1.5 px-3 border border-slate-300 text-center text-slate-500">${idx + 1}</td>
-                        <td class="py-1.5 px-3 border border-slate-300 font-semibold text-slate-800">${item.name} ${isAuto ? '<span class="ml-2 text-[9px] bg-slate-200 text-slate-600 px-1 py-0.5 rounded border border-slate-300">AUTO</span>' : ''}</td>
-                        <td class="py-1.5 px-3 border border-slate-300 text-slate-600">${item.category}</td>
-                        <td class="py-1.5 px-3 border border-slate-300 text-center">
-                            <input type="number" value="${valMl}" onchange="updateOpeningStock('${item.id}', this.value)" class="grid-input">
-                        </td>
-                        <td class="py-1.5 px-3 border border-slate-300 text-center text-slate-500 text-xs">${formatBottleMl(valMl, item.bottleSizeMl)}</td>
-                        <td class="py-1.5 px-3 border border-slate-300 text-center"><button onclick="deleteMasterItem('${item.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
-                    </tr>`;
-            });
-        }
-        function updateOpeningStock(id, val) { inventoryData[getDateKey()].opening[id] = parseFloat(val)||0; saveAllToLocalStorage(); renderOpeningStockTable(); }
-        function copyClosingFromYesterday() {
-            const pKey = getPreviousDayKey(); const cKey = getDateKey();
-            if (!inventoryData[pKey]?.closing) return alert('No previous closing data found.');
-            masterItems.forEach(i => inventoryData[cKey].opening[i.id] = inventoryData[pKey].closing[i.id] || 0);
-            saveAllToLocalStorage(); renderOpeningStockTable(); showToast('Success', 'Opening loaded from yesterday.');
-        }
-
-        function renderSRTable() {
-            const rec = inventoryData[getDateKey()];
-            const tbody = document.getElementById('srTable'); tbody.innerHTML = '';
-            masterItems.forEach((item, idx) => {
-                const sr = rec.sr[item.id] || { bottles: 0, totalMl: 0, ref: '', note: '' };
-                const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
-                tbody.innerHTML += `
-                    <tr class="${bgClass} hover:bg-amber-50">
-                        <td class="py-1.5 px-3 border border-slate-300 font-semibold text-slate-800">${item.name} <span class="text-slate-400 text-xs font-normal">(${item.bottleSizeMl}ml)</span></td>
-                        <td class="py-1.5 px-3 border border-slate-300"><input type="text" value="${sr.ref}" onchange="updateSR('${item.id}', 'ref', this.value)" class="grid-input text-left font-normal" placeholder="Doc #"></td>
-                        <td class="py-1.5 px-3 border border-slate-300"><input type="number" step="0.5" value="${sr.bottles}" onchange="updateSR('${item.id}', 'bottles', this.value)" class="grid-input text-blue-700"></td>
-                        <td class="py-1.5 px-3 border border-slate-300 text-center font-bold text-slate-700">+${sr.totalMl}</td>
-                        <td class="py-1.5 px-3 border border-slate-300"><input type="text" value="${sr.note}" onchange="updateSR('${item.id}', 'note', this.value)" class="grid-input text-left font-normal" placeholder="..."></td>
-                    </tr>`;
-            });
-        }
-        function updateSR(id, field, val) {
-            const key = getDateKey();
-            if (!inventoryData[key].sr[id]) inventoryData[key].sr[id] = { bottles: 0, totalMl: 0, ref: '', note: '' };
-            if (field === 'bottles') {
-                const btl = parseFloat(val)||0; const sz = masterItems.find(i=>i.id===id)?.bottleSizeMl || 750;
-                inventoryData[key].sr[id].bottles = btl; inventoryData[key].sr[id].totalMl = btl * sz;
-            } else inventoryData[key].sr[id][field] = val;
-            saveAllToLocalStorage(); renderSRTable();
-        }
-
-        function renderClosingTable() {
-            const rec = inventoryData[getDateKey()];
-            const tbody = document.getElementById('closingTable'); tbody.innerHTML = '';
-            masterItems.forEach((item, idx) => {
-                const op = getEffectiveOpening(item.id); const sr = parseFloat(rec.sr[item.id]?.totalMl)||0;
-                let spl = 0, ent = 0;
-                (rec.modifiers||[]).filter(m=>m.itemId===item.id).forEach(m=>spl+=parseFloat(m.qty)||0);
-                (rec.entertainment||[]).filter(e=>e.itemId===item.id).forEach(e=>ent+=parseFloat(e.qty)||0);
-                const pos = parseFloat(rec.closing[`${item.id}_pos`])||0;
-                const exp = op + sr - spl - ent - pos;
-                const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
-                const vari = cl - exp;
-                const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
-                
-                tbody.innerHTML += `
-                    <tr class="${bgClass} hover:bg-amber-50">
-                        <td class="py-1.5 px-2 border border-slate-300 font-semibold text-slate-800">${item.name}</td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center text-slate-600">${op}</td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center text-blue-700">${sr}</td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center font-bold bg-slate-100">${op+sr}</td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center text-amber-600">${spl}</td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center text-purple-600">${ent}</td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center"><input type="number" value="${pos}" onchange="updateCls('${item.id}_pos', this.value)" class="grid-input text-emerald-700 bg-emerald-50 border-emerald-200"></td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center font-bold text-blue-900 bg-blue-50">${exp}</td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center"><input type="number" value="${cl}" onchange="updateCls('${item.id}', this.value)" class="grid-input bg-yellow-50 border-yellow-400"></td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center font-bold ${vari < 0 ? 'text-red-600 bg-red-50' : 'text-slate-800'}">${vari}</td>
-                    </tr>`;
-            });
-        }
-        function updateCls(k, v) { inventoryData[getDateKey()].closing[k] = parseFloat(v)||0; saveAllToLocalStorage(); renderClosingTable(); }
-
-        function renderModifierTab() {
-            populateItemDrop('modItemSelect');
-            const tbody = document.getElementById('modifierLogTable'); tbody.innerHTML = '';
-            (inventoryData[getDateKey()].modifiers||[]).forEach((m, i) => {
-                const itm = masterItems.find(x=>x.id===m.itemId);
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-200">
-                        <td class="py-2 px-3 border-x border-slate-300 font-semibold">${itm?.name||'-'}</td>
-                        <td class="py-2 px-3 border-x border-slate-300 text-xs">${m.type}</td>
-                        <td class="py-2 px-3 border-x border-slate-300 text-center font-bold">${m.qty}</td>
-                        <td class="py-2 px-3 border-x border-slate-300 text-slate-600">${m.note}</td>
-                        <td class="py-2 px-3 border-x border-slate-300 text-center"><button onclick="delMod(${i})" class="text-red-500"><i class="fa-solid fa-xmark"></i></button></td>
-                    </tr>`;
-            });
-        }
-        function saveModifierLog(e) { e.preventDefault();
-            inventoryData[getDateKey()].modifiers.push({ itemId: document.getElementById('modItemSelect').value, type: document.getElementById('modType').value, qty: parseFloat(document.getElementById('modQty').value)||0, note: document.getElementById('modNote').value });
-            saveAllToLocalStorage(); e.target.reset(); renderModifierTab(); showToast('Saved', 'Ledger updated');
-        }
-        function delMod(i) { inventoryData[getDateKey()].modifiers.splice(i,1); saveAllToLocalStorage(); renderModifierTab(); }
-
-        function renderEntertainmentTab() {
-            populateItemDrop('entItemSelect');
-            const tbody = document.getElementById('entLogTable'); tbody.innerHTML = '';
-            (inventoryData[getDateKey()].entertainment||[]).forEach((e, i) => {
-                const itm = masterItems.find(x=>x.id===e.itemId);
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-200">
-                        <td class="py-2 px-3 border-x border-slate-300 font-semibold">${itm?.name||'-'}</td>
-                        <td class="py-2 px-3 border-x border-slate-300 text-center font-bold">${e.qty}</td>
-                        <td class="py-2 px-3 border-x border-slate-300">${e.approvedBy}</td>
-                        <td class="py-2 px-3 border-x border-slate-300 text-slate-600">${e.note}</td>
-                        <td class="py-2 px-3 border-x border-slate-300 text-center"><button onclick="delEnt(${i})" class="text-red-500"><i class="fa-solid fa-xmark"></i></button></td>
-                    </tr>`;
-            });
-        }
-        function saveEntertainmentLog(e) { e.preventDefault();
-            inventoryData[getDateKey()].entertainment.push({ itemId: document.getElementById('entItemSelect').value, qty: parseFloat(document.getElementById('entQty').value)||0, approvedBy: document.getElementById('entApprovedBy').value, note: document.getElementById('entNote').value });
-            saveAllToLocalStorage(); e.target.reset(); renderEntertainmentTab(); showToast('Saved', 'Ledger updated');
-        }
-        function delEnt(i) { inventoryData[getDateKey()].entertainment.splice(i,1); saveAllToLocalStorage(); renderEntertainmentTab(); }
-
-        function populateItemDrop(el) {
-            const sel = document.getElementById(el); sel.innerHTML = '';
-            masterItems.forEach(i => sel.appendChild(new Option(`${i.name} (${i.bottleSizeMl}ml)`, i.id)));
-        }
-
-        function renderRecapTable() {
-            const td = getDaysInMonth(currentYear, currentMonth);
-            const mn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            document.getElementById('recapMonthSubtitle').textContent = `1 - ${td} ${mn[currentMonth]} ${currentYear}`;
-            const filt = document.getElementById('recapCategoryFilter').value;
-            const items = filt === 'ALL' ? masterItems : masterItems.filter(i=>i.category===filt);
+        <!-- Tabel Live Variance Dashboard -->
+        <div class="bg-white rounded shadow-sm border border-gray-200 overflow-hidden">
+            <!-- Header Tabel -->
+            <div class="p-3 bg-gray-50 border-b border-gray-200 flex flex-wrap justify-between items-center gap-2">
+                <div class="font-bold text-sm text-slate-800 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-orange-500" viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+                    Live Variance Dashboard (ML)
+                </div>
+                <span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 text-[10px] font-bold tracking-wide uppercase rounded-sm border border-emerald-200">
+                    Real-time Calculation
+                </span>
+            </div>
             
-            const tbody = document.getElementById('recapTableBody'); tbody.innerHTML = '';
-            items.forEach((item, idx) => {
-                const op = getEffectiveOpening(item.id, 1, currentMonth, currentYear);
-                let sr=0, spl=0, ent=0, pos=0;
-                for (let d=1; d<=td; d++) {
-                    const rec = inventoryData[getDateKey(d, currentMonth, currentYear)];
-                    if (rec) {
-                        sr += parseFloat(rec.sr[item.id]?.totalMl)||0; pos += parseFloat(rec.closing[`${item.id}_pos`])||0;
-                        (rec.modifiers||[]).filter(m=>m.itemId===item.id).forEach(m=>spl+=parseFloat(m.qty)||0);
-                        (rec.entertainment||[]).filter(e=>e.itemId===item.id).forEach(e=>ent+=parseFloat(e.qty)||0);
-                    }
-                }
-                const lKey = getDateKey(td, currentMonth, currentYear);
-                const cl = inventoryData[lKey]?.closing[item.id] !== undefined ? parseFloat(inventoryData[lKey].closing[item.id]) : 0;
-                const vari = cl - (op + sr - spl - ent - pos);
-                const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
-
-                tbody.innerHTML += `
-                    <tr class="${bgClass} hover:bg-slate-100">
-                        <td class="py-2 px-2 border border-slate-300 font-semibold text-slate-800">${item.name}</td>
-                        <td class="py-2 px-2 border border-slate-300 text-center text-slate-500">${item.bottleSizeMl}</td>
-                        <td class="py-2 px-2 border border-slate-300 text-center bg-slate-100">${op}</td>
-                        <td class="py-2 px-2 border border-slate-300 text-center">${sr}</td>
-                        <td class="py-2 px-2 border border-slate-300 text-center text-slate-500">${spl}</td>
-                        <td class="py-2 px-2 border border-slate-300 text-center text-slate-500">${ent}</td>
-                        <td class="py-2 px-2 border border-slate-300 text-center font-semibold text-slate-700">${pos}</td>
-                        <td class="py-2 px-2 border border-slate-300 text-center font-bold text-blue-900 bg-blue-50">${cl}</td>
-                        <td class="py-2 px-2 border border-slate-300 text-center font-bold ${vari < 0 ? 'text-red-600' : 'text-slate-800'}">${vari}</td>
-                    </tr>`;
-            });
-        }
-
-        function openAddItemModal() { document.getElementById('addItemModal').classList.remove('hidden'); }
-        function closeAddItemModal() { document.getElementById('addItemModal').classList.add('hidden'); }
-        function handleAddNewItem(e) {
-            e.preventDefault();
-            const nm = document.getElementById('newItemName').value.trim();
-            const cp = parseFloat(document.getElementById('newItemCapacity').value)||750;
-            const ib = parseFloat(document.getElementById('newItemInitialBottles').value)||0;
-            if(!nm) return;
-            const nItem = { id:'item_'+Date.now(), name:nm, category:document.getElementById('newItemCategory').value, bottleSizeMl:cp };
-            masterItems.push(nItem); saveMasterItems();
-            inventoryData[getDateKey()].opening[nItem.id] = ib * cp; saveAllToLocalStorage();
-            closeAddItemModal(); renderActiveTab(); showToast('Success', `Item "${nm}" added.`);
-        }
-        function deleteMasterItem(id) { if(confirm('Delete this master item?')) { masterItems = masterItems.filter(i=>i.id!==id); saveMasterItems(); renderActiveTab(); } }
-
-        function exportToCSV() {
-            let csv = `Report Inventory ML\nName,Cat,Size,Opn,SR,Spill,Ent,POS,Cls,Var\n`;
-            masterItems.forEach(i => csv += `"${i.name}","${i.category}",${i.bottleSizeMl},0,0,0,0,0,0,0\n`); // Simplified for brevity in this snippet
-            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
-            a.download = `VHP_Bar_Export_${currentYear}.csv`; a.click();
-        }
-        function exportJSONBackup() {
-            const a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({masterItems, inventoryData}));
-            a.download = `VHP_DB_Backup.json`; a.click();
-        }
-    </script>
+            <!-- Wrapper Tabel Responsif -->
+            <div class="overflow-x-auto w-full">
+                <!-- min-w-max memastikan tabel tidak terhimpit di layar kecil -->
+                <table class="min-w-max w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-800 text-white divide-x divide-slate-700">
+                            <th class="p-3 font-semibold tracking-wide">Item Description</th>
+                            <th class="p-3 font-semibold tracking-wide text-center w-20">Size (ml)</th>
+                            <th class="p-3 font-semibold tracking-wide text-center w-20">Opening</th>
+                            <th class="p-3 font-semibold tracking-wide text-center w-20">SR In</th>
+                            <th class="p-3 font-semibold tracking-wide text-center w-20">Expected</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200 bg-white">
+                        <!-- Baris 1 -->
+                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
+                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Johnnie Walker Black Label</td>
+                            <td class="p-3 text-center text-gray-600">750</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                        </tr>
+                        <!-- Baris 2 -->
+                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
+                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Hendrick's Gin</td>
+                            <td class="p-3 text-center text-gray-600">700</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                        </tr>
+                        <!-- Baris 3 -->
+                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
+                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Absolut Vodka</td>
+                            <td class="p-3 text-center text-gray-600">750</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                        </tr>
+                        <!-- Baris 4 -->
+                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
+                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Jose Cuervo Reposado Tequila</td>
+                            <td class="p-3 text-center text-gray-600">750</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                        </tr>
+                        <!-- Baris 5 -->
+                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
+                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Penfolds Shiraz Red Wine</td>
+                            <td class="p-3 text-center text-gray-600">750</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                        </tr>
+                        <!-- Baris 6 -->
+                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
+                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Heineken Beer</td>
+                            <td class="p-3 text-center text-gray-600">330</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                        </tr>
+                        <!-- Baris 7 -->
+                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
+                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Monin Syrup Hazelnut</td>
+                            <td class="p-3 text-center text-gray-600">700</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                        </tr>
+                        <!-- Baris 8 -->
+                        <tr class="hover:bg-gray-50 divide-x divide-gray-200">
+                            <td class="p-3 font-medium text-slate-800 whitespace-normal min-w-[150px] max-w-[200px]">Coca Cola</td>
+                            <td class="p-3 text-center text-gray-600">330</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                            <td class="p-3 text-center text-blue-600 font-semibold bg-blue-50/30">+0</td>
+                            <td class="p-3 text-center text-gray-800">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- Margin bawah agar saat scroll tidak mentok dengan batas bawah layar Android -->
+        <div class="h-6"></div>
+    </div>
 </body>
 </html>

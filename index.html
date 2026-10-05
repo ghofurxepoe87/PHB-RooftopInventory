@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooftop Platinum Hotel Balikpapan - FBM Inventory System</title>
     
+    <!-- Favicon Logo -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -500,7 +503,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC DENGAN FITUR STATUS ALERT -->
+    <!-- JAVASCRIPT LOGIC DENGAN FITUR LENGKAP -->
     <script>
         const DEFAULT_ITEMS = [
             { id: 'item_1', name: 'Johnnie Walker Black Label', category: 'Spirits', bottleSizeMl: 750 },
@@ -647,8 +650,7 @@
             if (rem === 0) return `${btl} Btl`;
             return `${btl} Btl + ${rem}ml`;
         }
-        
-        // FUNGSI UNTUK MENDAPATKAN BADGE STATUS STOK
+
         function getStockStatusBadge(closingMl, bottleSizeMl) {
             if (closingMl <= 0) {
                 return '<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold uppercase border border-red-200 block w-full">Kosong (SR!)</span>';
@@ -685,7 +687,9 @@
                 
                 const exp = op + sr - spill - ent - pos;
                 const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
-                const variance = cl - exp;
+                
+                // RUMUS VARIANCE DIBALIK (Expected - Closing)
+                const variance = exp - cl;
                 const statusHtml = getStockStatusBadge(cl, item.bottleSizeMl);
 
                 const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
@@ -697,10 +701,45 @@
                         <td class="py-2 px-3 border border-slate-300 text-center font-semibold text-blue-700">+${sr}</td>
                         <td class="py-2 px-3 border border-slate-300 text-center bg-slate-100">${exp}</td>
                         <td class="py-2 px-3 border border-slate-300 text-center font-bold text-blue-900 bg-blue-50">${cl}</td>
-                        <td class="py-2 px-3 border border-slate-300 text-center font-bold ${variance < 0 ? 'text-red-600 bg-red-50' : 'text-emerald-700'}">${variance}</td>
+                        <td class="py-2 px-3 border border-slate-300 text-center font-bold ${variance > 0 ? 'text-red-600 bg-red-50' : 'text-emerald-700'}">${variance > 0 ? '+'+variance : variance}</td>
                         <td class="py-2 px-3 border border-slate-300 text-center">${statusHtml}</td>
                     </tr>`;
             });
+        }
+
+        // FUNGSI LOAD PREV CLOSING BARU (Mencari data ke belakang sampai 30 hari)
+        function copyClosingFromYesterday() {
+            const cKey = getDateKey();
+            let lastValidKey = null;
+
+            // Cari data closing mundur hingga 30 hari
+            for(let i = 1; i <= 30; i++) {
+                let pastDate = new Date(currentYear, currentMonth, currentDay);
+                pastDate.setDate(pastDate.getDate() - i);
+                let testKey = getDateKey(pastDate.getDate(), pastDate.getMonth(), pastDate.getFullYear());
+
+                if (inventoryData[testKey] && inventoryData[testKey].closing && Object.keys(inventoryData[testKey].closing).length > 0) {
+                    lastValidKey = testKey;
+                    break;
+                }
+            }
+
+            if (!lastValidKey) {
+                alert('Gagal: Tidak ada data Physical Closing tersimpan di hari-hari sebelumnya. Pastikan Anda sudah menginput dan menekan "Simpan Data" pada menu Closing di hari operasional sebelumnya.');
+                return;
+            }
+
+            // Pindahkan data yang ditemukan ke hari ini
+            masterItems.forEach(i => {
+                const lastClosingVal = inventoryData[lastValidKey].closing[i.id];
+                inventoryData[cKey].opening[i.id] = (lastClosingVal !== undefined && !isNaN(lastClosingVal)) ? parseFloat(lastClosingVal) : 0;
+            });
+
+            saveAllToLocalStorage(); 
+            renderOpeningStockTable(); 
+            renderClosingTable();
+            renderDashboard();
+            showToast('Sukses', 'Data opening berhasil ditarik otomatis dari closing terakhir.');
         }
 
         function renderOpeningStockTable() {
@@ -724,12 +763,6 @@
             });
         }
         function updateOpeningStock(id, val) { inventoryData[getDateKey()].opening[id] = parseFloat(val)||0; saveAllToLocalStorage(); renderOpeningStockTable(); }
-        function copyClosingFromYesterday() {
-            const pKey = getPreviousDayKey(); const cKey = getDateKey();
-            if (!inventoryData[pKey]?.closing) return alert('No previous closing data found.');
-            masterItems.forEach(i => inventoryData[cKey].opening[i.id] = inventoryData[pKey].closing[i.id] || 0);
-            saveAllToLocalStorage(); renderOpeningStockTable(); showToast('Success', 'Opening loaded from yesterday.');
-        }
 
         function renderSRTable() {
             const rec = inventoryData[getDateKey()];
@@ -768,7 +801,9 @@
                 const pos = parseFloat(rec.closing[`${item.id}_pos`])||0;
                 const exp = op + sr - spl - ent - pos;
                 const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
-                const vari = cl - exp;
+                
+                // RUMUS VARIANCE DIBALIK (Expected - Closing)
+                const vari = exp - cl;
                 const statusHtml = getStockStatusBadge(cl, item.bottleSizeMl);
                 const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
                 
@@ -783,12 +818,12 @@
                         <td class="py-1.5 px-2 border border-slate-300 text-center"><input type="number" value="${pos}" onchange="updateCls('${item.id}_pos', this.value)" class="grid-input text-emerald-700 bg-emerald-50 border-emerald-200"></td>
                         <td class="py-1.5 px-2 border border-slate-300 text-center font-bold text-blue-900 bg-blue-50">${exp}</td>
                         <td class="py-1.5 px-2 border border-slate-300 text-center"><input type="number" value="${cl}" onchange="updateCls('${item.id}', this.value)" class="grid-input bg-yellow-50 border-yellow-400"></td>
-                        <td class="py-1.5 px-2 border border-slate-300 text-center font-bold ${vari < 0 ? 'text-red-600 bg-red-50' : 'text-slate-800'}">${vari}</td>
+                        <td class="py-1.5 px-2 border border-slate-300 text-center font-bold ${vari > 0 ? 'text-red-600 bg-red-50' : 'text-slate-800'}">${vari > 0 ? '+'+vari : vari}</td>
                         <td class="py-1.5 px-2 border border-slate-300 text-center">${statusHtml}</td>
                     </tr>`;
             });
         }
-        function updateCls(k, v) { inventoryData[getDateKey()].closing[k] = parseFloat(v)||0; saveAllToLocalStorage(); renderClosingTable(); }
+        function updateCls(k, v) { inventoryData[getDateKey()].closing[k] = parseFloat(v)||0; saveAllToLocalStorage(); renderClosingTable(); renderDashboard(); }
 
         function renderModifierTab() {
             populateItemDrop('modItemSelect');
@@ -858,7 +893,10 @@
                 }
                 const lKey = getDateKey(td, currentMonth, currentYear);
                 const cl = inventoryData[lKey]?.closing[item.id] !== undefined ? parseFloat(inventoryData[lKey].closing[item.id]) : 0;
-                const vari = cl - (op + sr - spl - ent - pos);
+                
+                // RUMUS VARIANCE DIBALIK (Expected - Closing)
+                const exp = op + sr - spl - ent - pos;
+                const vari = exp - cl;
                 const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
 
                 tbody.innerHTML += `
@@ -871,7 +909,7 @@
                         <td class="py-2 px-2 border border-slate-300 text-center text-slate-500">${ent}</td>
                         <td class="py-2 px-2 border border-slate-300 text-center font-semibold text-slate-700">${pos}</td>
                         <td class="py-2 px-2 border border-slate-300 text-center font-bold text-blue-900 bg-blue-50">${cl}</td>
-                        <td class="py-2 px-2 border border-slate-300 text-center font-bold ${vari < 0 ? 'text-red-600' : 'text-slate-800'}">${vari}</td>
+                        <td class="py-2 px-2 border border-slate-300 text-center font-bold ${vari > 0 ? 'text-red-600' : 'text-slate-800'}">${vari > 0 ? '+'+vari : vari}</td>
                     </tr>`;
             });
         }

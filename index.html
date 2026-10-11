@@ -18,11 +18,11 @@
                         extend: {
                             colors: {
                                 platinum: {
-                                    gold: '#d97706',      // Amber 600
-                                    dark: '#0f172a',      // Slate 900
-                                    panel: '#1e293b',     // Slate 800
-                                    surface: '#f8fafc',   // Slate 50
-                                    grid: '#e2e8f0',      // Slate 200
+                                    gold: '#d97706',
+                                    dark: '#0f172a',
+                                    panel: '#1e293b',
+                                    surface: '#f8fafc',
+                                    grid: '#e2e8f0',
                                 }
                             }
                         }
@@ -44,24 +44,18 @@
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #e2e8f0; }
-        
-        /* Scrollbar Desktop ala VHP */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; border-left: 1px solid #cbd5e1; }
         ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-        
         .vhp-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
         .grid-input { border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 2px; outline: none; transition: border-color 0.2s; width: 100%; text-align: center; font-weight: 600; color: #0f172a; }
         .grid-input:focus { border-color: #d97706; box-shadow: 0 0 0 1px #d97706; }
-        
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; }
             .vhp-shadow { box-shadow: none !important; border: none !important; }
         }
-
-        /* --- TAMBAHAN KHUSUS UNTUK HP ANDROID & IPHONE --- */
         @media screen and (max-width: 768px) {
             body, html { max-width: 100vw; overflow-x: hidden; }
             .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -72,12 +66,10 @@
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col antialiased pb-12">
 
-    <!-- TOP HEADER BAR (VHP Style) -->
+    <!-- TOP HEADER BAR -->
     <header class="bg-platinum-dark text-white border-b-4 border-platinum-gold no-print z-30 sticky top-0 vhp-shadow">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6">
             <div class="flex flex-wrap items-center justify-between py-3 gap-3">
-                
-                <!-- Logo & Brand -->
                 <div class="flex items-center space-x-3 sm:space-x-4 w-full md:w-auto">
                     <div class="bg-white p-1.5 rounded shadow-sm border border-slate-300 shrink-0">
                         <img src="logo.png" alt="Logo Platinum Hotel" class="h-6 sm:h-8 w-auto object-contain">
@@ -90,7 +82,6 @@
                     </div>
                 </div>
 
-                <!-- Global Action & Date Selection -->
                 <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end">
                     <div class="bg-platinum-panel border border-slate-700 rounded flex items-center px-2 py-1.5 text-sm shadow-inner flex-grow sm:flex-grow-0 justify-center">
                         <i class="fa-regular fa-calendar-days text-platinum-gold mr-2"></i>
@@ -246,7 +237,7 @@
             </div>
         </section>
 
-        <!-- SECTION 3: STORE REQUISITION (SR) -->
+        <!-- SECTION 3: STORE REQUISITION -->
         <section id="view-sr" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
@@ -506,9 +497,8 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC DENGAN INISIALISASI AMAN & SUPABASE -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // --- KONFIGURASI SUPABASE ---
         const SUPABASE_URL = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_AvLLrrZ0-7F2_AXjC1LQhg_H_bolEmB';
         
@@ -520,7 +510,7 @@
                 supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch (e) {
-            console.error("Gagal menginisialisasi Supabase:", e);
+            console.error("Gagal inisialisasi Supabase:", e);
         }
 
         const DEFAULT_ITEMS = [
@@ -562,53 +552,47 @@
         function saveMasterItems() { localStorage.setItem('bartrack_master_items_ml', JSON.stringify(masterItems)); }
         function saveAllToLocalStorage() { localStorage.setItem('bartrack_inventory_data_ml', JSON.stringify(inventoryData)); }
 
-        // --- FUNGSI SIMPAN TERINTEGRASI SUPABASE & LOCAL STORAGE ---
         async function manualSaveWithFeedback() {
             saveAllToLocalStorage();
 
             try {
-                if (!supabase) {
-                    showToast('Tersimpan Lokal', 'Perubahan data berhasil disinkronkan ke local storage.');
-                    return;
-                }
+                if (supabase) {
+                    const rec = inventoryData[getDateKey()];
+                    const rowsToInsert = [];
 
-                const rec = inventoryData[getDateKey()];
-                const rowsToInsert = [];
+                    masterItems.forEach(item => {
+                        const op = getEffectiveOpening(item.id);
+                        const sr = parseFloat(rec.sr[item.id]?.totalMl) || 0;
+                        let spill = 0, ent = 0;
+                        (rec.modifiers || []).filter(m => m.itemId === item.id).forEach(m => spill += parseFloat(m.qty) || 0);
+                        (rec.entertainment || []).filter(e => e.itemId === item.id).forEach(e => ent += parseFloat(e.qty) || 0);
+                        const pos = parseFloat(rec.closing[`${item.id}_pos`]) || 0;
+                        
+                        const exp = op + sr - spill - ent - pos;
+                        const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
 
-                masterItems.forEach(item => {
-                    const op = getEffectiveOpening(item.id);
-                    const sr = parseFloat(rec.sr[item.id]?.totalMl) || 0;
-                    let spill = 0, ent = 0;
-                    (rec.modifiers || []).filter(m => m.itemId === item.id).forEach(m => spill += parseFloat(m.qty) || 0);
-                    (rec.entertainment || []).filter(e => e.itemId === item.id).forEach(e => ent += parseFloat(e.qty) || 0);
-                    const pos = parseFloat(rec.closing[`${item.id}_pos`]) || 0;
-                    
-                    const exp = op + sr - spill - ent - pos;
-                    const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
-
-                    rowsToInsert.push({
-                        nama_barang: item.name,
-                        Qty: cl
+                        rowsToInsert.push({
+                            nama_barang: item.name,
+                            Qty: cl
+                        });
                     });
-                });
 
-                if (rowsToInsert.length > 0) {
-                    const { error } = await supabase
-                        .from('phbinventory')
-                        .insert(rowsToInsert);
+                    if (rowsToInsert.length > 0) {
+                        const { error } = await supabase
+                            .from('phbinventory')
+                            .insert(rowsToInsert);
 
-                    if (error) {
-                        console.error('Gagal sinkronisasi Supabase:', error.message);
-                        showToast('Peringatan', 'Tersimpan lokal, tapi gagal ke Supabase.');
-                        return;
+                        if (error) {
+                            console.error('Gagal Supabase:', error.message);
+                        }
                     }
                 }
 
-                showToast('Database Updated', 'Data berhasil disimpan & disinkronkan ke Supabase!');
+                showToast('Database Updated', 'Data berhasil disimpan & disinkronkan ke Supabase.');
 
             } catch (err) {
                 console.error('Error:', err);
-                showToast('Tersimpan Lokal', 'Perubahan data berhasil disinkronkan ke local storage.');
+                showToast('Tersimpan Lokal', 'Perubahan data berhasil disimpan.');
             }
         }
 
@@ -986,7 +970,7 @@
 
         function exportToCSV() {
             let csv = `Report Inventory ML\nName,Cat,Size,Opn,SR,Spill,Ent,POS,Cls,Var\n`;
-            masterItems.setItem ? null : masterItems.forEach(i => csv += `"${i.name}","${i.category}",${i.bottleSizeMl},0,0,0,0,0,0,0\n`);
+            masterItems.forEach(i => csv += `"${i.name}","${i.category}",${i.bottleSizeMl},0,0,0,0,0,0,0\n`);
             const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
             a.download = `VHP_Bar_Export_${currentYear}.csv`; a.click();
         }

@@ -509,9 +509,8 @@
     <!-- JAVASCRIPT LOGIC DENGAN SUPABASE INTEGRATION -->
     <script>
         // --- KONFIGURASI SUPABASE ---
-        // (Ganti URL dan ANON KEY di bawah ini dengan kredensial asli proyek Supabase Anda)
-        const SUPABASE_URL = 'ISI_SUPABASE_URL_ANDA_DI_SINI';
-        const SUPABASE_ANON_KEY = 'ISI_SUPABASE_ANON_KEY_ANDA_DI_SINI';
+        const SUPABASE_URL = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_AvLLrrZ0-7F2_AXjC1LQhg_H_bolEmB';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         const DEFAULT_ITEMS = [
@@ -555,11 +554,9 @@
 
         // --- FUNGSI SIMPAN TERINTEGRASI SUPABASE & LOCAL STORAGE ---
         async function manualSaveWithFeedback() {
-            // 1. Simpan ke local storage seperti biasa
             saveAllToLocalStorage();
 
             try {
-                // 2. Kumpulkan data item & closing untuk dikirim ke Supabase
                 const rec = inventoryData[getDateKey()];
                 const rowsToInsert = [];
 
@@ -580,7 +577,6 @@
                     });
                 });
 
-                // 3. Kirim data ke tabel 'phbinventory' di Supabase
                 if (rowsToInsert.length > 0) {
                     const { error } = await supabase
                         .from('phbinventory')

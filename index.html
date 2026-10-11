@@ -39,6 +39,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Supabase JS Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #e2e8f0; }
         
@@ -503,8 +506,14 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC DENGAN FITUR LENGKAP -->
+    <!-- JAVASCRIPT LOGIC DENGAN SUPABASE INTEGRATION -->
     <script>
+        // --- KONFIGURASI SUPABASE ---
+        // (Ganti URL dan ANON KEY di bawah ini dengan kredensial asli proyek Supabase Anda)
+        const SUPABASE_URL = 'ISI_SUPABASE_URL_ANDA_DI_SINI';
+        const SUPABASE_ANON_KEY = 'ISI_SUPABASE_ANON_KEY_ANDA_DI_SINI';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         const DEFAULT_ITEMS = [
             { id: 'item_1', name: 'Johnnie Walker Black Label', category: 'Spirits', bottleSizeMl: 750 },
             { id: 'item_2', name: 'Hendrick\'s Gin', category: 'Spirits', bottleSizeMl: 700 },
@@ -544,9 +553,52 @@
         function saveMasterItems() { localStorage.setItem('bartrack_master_items_ml', JSON.stringify(masterItems)); }
         function saveAllToLocalStorage() { localStorage.setItem('bartrack_inventory_data_ml', JSON.stringify(inventoryData)); }
 
-        function manualSaveWithFeedback() {
+        // --- FUNGSI SIMPAN TERINTEGRASI SUPABASE & LOCAL STORAGE ---
+        async function manualSaveWithFeedback() {
+            // 1. Simpan ke local storage seperti biasa
             saveAllToLocalStorage();
-            showToast('Database Updated', 'Perubahan data berhasil disinkronkan ke local storage.');
+
+            try {
+                // 2. Kumpulkan data item & closing untuk dikirim ke Supabase
+                const rec = inventoryData[getDateKey()];
+                const rowsToInsert = [];
+
+                masterItems.forEach(item => {
+                    const op = getEffectiveOpening(item.id);
+                    const sr = parseFloat(rec.sr[item.id]?.totalMl) || 0;
+                    let spill = 0, ent = 0;
+                    (rec.modifiers || []).filter(m => m.itemId === item.id).forEach(m => spill += parseFloat(m.qty) || 0);
+                    (rec.entertainment || []).filter(e => e.itemId === item.id).forEach(e => ent += parseFloat(e.qty) || 0);
+                    const pos = parseFloat(rec.closing[`${item.id}_pos`]) || 0;
+                    
+                    const exp = op + sr - spill - ent - pos;
+                    const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
+
+                    rowsToInsert.push({
+                        nama_barang: item.name,
+                        Qty: cl
+                    });
+                });
+
+                // 3. Kirim data ke tabel 'phbinventory' di Supabase
+                if (rowsToInsert.length > 0) {
+                    const { error } = await supabase
+                        .from('phbinventory')
+                        .insert(rowsToInsert);
+
+                    if (error) {
+                        console.error('Gagal sinkronisasi Supabase:', error.message);
+                        showToast('Peringatan', 'Tersimpan lokal, tapi gagal ke Supabase.');
+                        return;
+                    }
+                }
+
+                showToast('Database Updated', 'Data berhasil disimpan & disinkronkan ke Supabase!');
+
+            } catch (err) {
+                console.error('Error:', err);
+                showToast('Tersimpan Lokal', 'Perubahan data berhasil disinkronkan ke local storage.');
+            }
         }
 
         function showToast(title, message) {
@@ -687,8 +739,6 @@
                 
                 const exp = op + sr - spill - ent - pos;
                 const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
-                
-                // RUMUS VARIANCE DIBALIK (Expected - Closing)
                 const variance = exp - cl;
                 const statusHtml = getStockStatusBadge(cl, item.bottleSizeMl);
 
@@ -707,12 +757,10 @@
             });
         }
 
-        // FUNGSI LOAD PREV CLOSING BARU (Mencari data ke belakang sampai 30 hari)
         function copyClosingFromYesterday() {
             const cKey = getDateKey();
             let lastValidKey = null;
 
-            // Cari data closing mundur hingga 30 hari
             for(let i = 1; i <= 30; i++) {
                 let pastDate = new Date(currentYear, currentMonth, currentDay);
                 pastDate.setDate(pastDate.getDate() - i);
@@ -725,11 +773,10 @@
             }
 
             if (!lastValidKey) {
-                alert('Gagal: Tidak ada data Physical Closing tersimpan di hari-hari sebelumnya. Pastikan Anda sudah menginput dan menekan "Simpan Data" pada menu Closing di hari operasional sebelumnya.');
+                alert('Gagal: Tidak ada data Physical Closing tersimpan di hari-hari sebelumnya.');
                 return;
             }
 
-            // Pindahkan data yang ditemukan ke hari ini
             masterItems.forEach(i => {
                 const lastClosingVal = inventoryData[lastValidKey].closing[i.id];
                 inventoryData[cKey].opening[i.id] = (lastClosingVal !== undefined && !isNaN(lastClosingVal)) ? parseFloat(lastClosingVal) : 0;
@@ -801,8 +848,6 @@
                 const pos = parseFloat(rec.closing[`${item.id}_pos`])||0;
                 const exp = op + sr - spl - ent - pos;
                 const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
-                
-                // RUMUS VARIANCE DIBALIK (Expected - Closing)
                 const vari = exp - cl;
                 const statusHtml = getStockStatusBadge(cl, item.bottleSizeMl);
                 const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
@@ -894,7 +939,6 @@
                 const lKey = getDateKey(td, currentMonth, currentYear);
                 const cl = inventoryData[lKey]?.closing[item.id] !== undefined ? parseFloat(inventoryData[lKey].closing[item.id]) : 0;
                 
-                // RUMUS VARIANCE DIBALIK (Expected - Closing)
                 const exp = op + sr - spl - ent - pos;
                 const vari = exp - cl;
                 const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';

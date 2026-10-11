@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooftop Platinum Hotel Balikpapan - FBM Inventory System</title>
     
-    <!-- Favicon Logo -->
     <link rel="icon" type="image/png" href="favicon.png">
     
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         const initTailwind = () => {
@@ -35,12 +33,11 @@
         initTailwind();
     </script>
     
-    <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Supabase JS Client Library -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase JS Client Library UMD (Stabil untuk Browser) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #e2e8f0; }
@@ -66,7 +63,6 @@
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col antialiased pb-12">
 
-    <!-- TOP HEADER BAR -->
     <header class="bg-platinum-dark text-white border-b-4 border-platinum-gold no-print z-30 sticky top-0 vhp-shadow">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6">
             <div class="flex flex-wrap items-center justify-between py-3 gap-3">
@@ -115,7 +111,6 @@
             </div>
         </div>
 
-        <!-- MODULE TABS -->
         <div class="bg-platinum-panel pt-2 px-2 sm:px-6 max-w-[1400px] mx-auto flex space-x-1 overflow-x-auto no-scrollbar flex-nowrap" style="-webkit-overflow-scrolling: touch;">
             <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn active shrink-0 px-4 py-2 text-sm font-bold bg-white text-platinum-dark border-t-2 border-platinum-gold rounded-t flex items-center gap-2">
                 <i class="fa-solid fa-chart-bar"></i> Dashboard
@@ -141,7 +136,6 @@
         </div>
     </header>
 
-    <!-- SYSTEM STATUS BAR -->
     <div class="bg-white border-b border-slate-300 text-[11px] sm:text-xs px-4 sm:px-6 py-2 shadow-sm max-w-[1400px] mx-auto w-full flex flex-wrap justify-between items-center text-slate-500 font-medium gap-2">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 w-full sm:w-auto">
             <span class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> System Online</span>
@@ -152,10 +146,7 @@
         </button>
     </div>
 
-    <!-- MAIN WORKSPACE -->
     <main class="max-w-[1400px] mx-auto px-4 sm:px-6 mt-4 flex-1 w-full">
-
-        <!-- Notification Toast -->
         <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-10 opacity-0 transition-all duration-300 bg-platinum-dark text-white px-4 py-3 rounded shadow-xl flex items-center gap-3 border-l-4 border-emerald-500 pointer-events-none">
             <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
             <div>
@@ -164,7 +155,6 @@
             </div>
         </div>
 
-        <!-- SECTION 1: DASHBOARD -->
         <section id="view-dashboard" class="view-section space-y-4">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div class="bg-white p-3 sm:p-4 rounded vhp-shadow border-l-4 border-slate-500 flex items-center justify-between">
@@ -210,13 +200,12 @@
             </div>
         </section>
 
-        <!-- SECTION 2: OPENING STOCK -->
         <section id="view-opening" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
                     <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-box-open text-platinum-gold"></i> Opening Stock / Carry Forward</h2>
                     <button onclick="copyClosingFromYesterday()" class="bg-platinum-panel hover:bg-slate-700 text-white text-[10px] sm:text-xs font-medium px-2 sm:px-3 py-1.5 rounded flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-clock-rotate-left text-platinum-gold"></i> <span class="hidden sm:inline">Load Prev. Closing</span><span class="sm:hidden">Load Prev</span>
+                        <i class="fa-solid fa-clock-rotate-left text-platinum-gold"></i> Load Prev. Closing
                     </button>
                 </div>
                 <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
@@ -237,7 +226,6 @@
             </div>
         </section>
 
-        <!-- SECTION 3: STORE REQUISITION -->
         <section id="view-sr" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
@@ -260,7 +248,6 @@
             </div>
         </section>
 
-        <!-- SECTION 4: CLOSING & VARIANCE -->
         <section id="view-closing" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
@@ -289,7 +276,6 @@
             </div>
         </section>
 
-        <!-- SECTION 5: MODIFIER & SPILLAGE -->
         <section id="view-modifier" class="view-section hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-white rounded vhp-shadow border border-slate-300 h-fit">
@@ -346,7 +332,6 @@
             </div>
         </section>
 
-        <!-- SECTION 6: ENTERTAINMENT -->
         <section id="view-entertainment" class="view-section hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-white rounded vhp-shadow border border-slate-300 h-fit">
@@ -398,7 +383,6 @@
             </div>
         </section>
 
-        <!-- SECTION 7: MONTHLY RECAP -->
         <section id="view-recap" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300 print-card">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex flex-wrap justify-between items-center gap-2 rounded-t no-print">
@@ -454,7 +438,6 @@
 
     </main>
 
-    <!-- MODAL: ADD MASTER ITEM -->
     <div id="addItemModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-md max-w-md w-full shadow-2xl border border-slate-300 flex flex-col">
             <div class="bg-platinum-panel px-4 py-3 flex justify-between items-center rounded-t-md">
@@ -497,17 +480,15 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT AMAN & STABIL -->
     <script>
         const SUPABASE_URL = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_AvLLrrZ0-7F2_AXjC1LQhg_H_bolEmB';
         
         let supabase = null;
         try {
-            if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+            if (window.supabase && window.supabase.createClient) {
                 supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            } else if (typeof supabase !== 'undefined' && supabase.createClient) {
-                supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         } catch (e) {
             console.error("Gagal inisialisasi Supabase:", e);
@@ -557,7 +538,7 @@
 
             try {
                 if (supabase) {
-                    const rec = inventoryData[getDateKey()];
+                    const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
                     const rowsToInsert = [];
 
                     masterItems.forEach(item => {
@@ -709,7 +690,7 @@
         }
 
         function renderDashboard() {
-            const rec = inventoryData[getDateKey()];
+            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
             document.getElementById('kpiTotalItems').textContent = masterItems.length;
             
             let totalSRMl = 0, totalConsumedMl = 0, totalEntSpillMl = 0;
@@ -807,7 +788,7 @@
         function updateOpeningStock(id, val) { inventoryData[getDateKey()].opening[id] = parseFloat(val)||0; saveAllToLocalStorage(); renderOpeningStockTable(); }
 
         function renderSRTable() {
-            const rec = inventoryData[getDateKey()];
+            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
             const tbody = document.getElementById('srTable'); tbody.innerHTML = '';
             masterItems.forEach((item, idx) => {
                 const sr = rec.sr[item.id] || { bottles: 0, totalMl: 0, ref: '', note: '' };
@@ -833,7 +814,7 @@
         }
 
         function renderClosingTable() {
-            const rec = inventoryData[getDateKey()];
+            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
             const tbody = document.getElementById('closingTable'); tbody.innerHTML = '';
             masterItems.forEach((item, idx) => {
                 const op = getEffectiveOpening(item.id); const sr = parseFloat(rec.sr[item.id]?.totalMl)||0;
@@ -867,8 +848,9 @@
 
         function renderModifierTab() {
             populateItemDrop('modItemSelect');
+            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
             const tbody = document.getElementById('modifierLogTable'); tbody.innerHTML = '';
-            (inventoryData[getDateKey()].modifiers||[]).forEach((m, i) => {
+            (rec.modifiers||[]).forEach((m, i) => {
                 const itm = masterItems.find(x=>x.id===m.itemId);
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 border-b border-slate-200">
@@ -881,15 +863,18 @@
             });
         }
         function saveModifierLog(e) { e.preventDefault();
-            inventoryData[getDateKey()].modifiers.push({ itemId: document.getElementById('modItemSelect').value, type: document.getElementById('modType').value, qty: parseFloat(document.getElementById('modQty').value)||0, note: document.getElementById('modNote').value });
+            const key = getDateKey();
+            if (!inventoryData[key].modifiers) inventoryData[key].modifiers = [];
+            inventoryData[key].modifiers.push({ itemId: document.getElementById('modItemSelect').value, type: document.getElementById('modType').value, qty: parseFloat(document.getElementById('modQty').value)||0, note: document.getElementById('modNote').value });
             saveAllToLocalStorage(); e.target.reset(); renderModifierTab(); showToast('Saved', 'Ledger updated');
         }
         function delMod(i) { inventoryData[getDateKey()].modifiers.splice(i,1); saveAllToLocalStorage(); renderModifierTab(); }
 
         function renderEntertainmentTab() {
             populateItemDrop('entItemSelect');
+            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
             const tbody = document.getElementById('entLogTable'); tbody.innerHTML = '';
-            (inventoryData[getDateKey()].entertainment||[]).forEach((e, i) => {
+            (rec.entertainment||[]).forEach((e, i) => {
                 const itm = masterItems.find(x=>x.id===e.itemId);
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 border-b border-slate-200">
@@ -902,7 +887,9 @@
             });
         }
         function saveEntertainmentLog(e) { e.preventDefault();
-            inventoryData[getDateKey()].entertainment.push({ itemId: document.getElementById('entItemSelect').value, qty: parseFloat(document.getElementById('entQty').value)||0, approvedBy: document.getElementById('entApprovedBy').value, note: document.getElementById('entNote').value });
+            const key = getDateKey();
+            if (!inventoryData[key].entertainment) inventoryData[key].entertainment = [];
+            inventoryData[key].entertainment.push({ itemId: document.getElementById('entItemSelect').value, qty: parseFloat(document.getElementById('entQty').value)||0, approvedBy: document.getElementById('entApprovedBy').value, note: document.getElementById('entNote').value });
             saveAllToLocalStorage(); e.target.reset(); renderEntertainmentTab(); showToast('Saved', 'Ledger updated');
         }
         function delEnt(i) { inventoryData[getDateKey()].entertainment.splice(i,1); saveAllToLocalStorage(); renderEntertainmentTab(); }

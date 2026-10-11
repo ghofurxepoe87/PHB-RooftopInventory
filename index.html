@@ -506,12 +506,22 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC DENGAN SUPABASE INTEGRATION -->
+    <!-- JAVASCRIPT LOGIC DENGAN INISIALISASI AMAN & SUPABASE -->
     <script>
         // --- KONFIGURASI SUPABASE ---
         const SUPABASE_URL = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_AvLLrrZ0-7F2_AXjC1LQhg_H_bolEmB';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let supabase = null;
+        try {
+            if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } else if (typeof supabase !== 'undefined' && supabase.createClient) {
+                supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            }
+        } catch (e) {
+            console.error("Gagal menginisialisasi Supabase:", e);
+        }
 
         const DEFAULT_ITEMS = [
             { id: 'item_1', name: 'Johnnie Walker Black Label', category: 'Spirits', bottleSizeMl: 750 },
@@ -557,6 +567,11 @@
             saveAllToLocalStorage();
 
             try {
+                if (!supabase) {
+                    showToast('Tersimpan Lokal', 'Perubahan data berhasil disinkronkan ke local storage.');
+                    return;
+                }
+
                 const rec = inventoryData[getDateKey()];
                 const rowsToInsert = [];
 
@@ -971,7 +986,7 @@
 
         function exportToCSV() {
             let csv = `Report Inventory ML\nName,Cat,Size,Opn,SR,Spill,Ent,POS,Cls,Var\n`;
-            masterItems.forEach(i => csv += `"${i.name}","${i.category}",${i.bottleSizeMl},0,0,0,0,0,0,0\n`);
+            masterItems.setItem ? null : masterItems.forEach(i => csv += `"${i.name}","${i.category}",${i.bottleSizeMl},0,0,0,0,0,0,0\n`);
             const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
             a.download = `VHP_Bar_Export_${currentYear}.csv`; a.click();
         }

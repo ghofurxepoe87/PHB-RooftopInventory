@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooftop Platinum Hotel Balikpapan - FBM Inventory System</title>
     
+    <!-- Favicon Logo -->
     <link rel="icon" type="image/png" href="favicon.png">
     
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         const initTailwind = () => {
@@ -16,11 +18,11 @@
                         extend: {
                             colors: {
                                 platinum: {
-                                    gold: '#d97706',
-                                    dark: '#0f172a',
-                                    panel: '#1e293b',
-                                    surface: '#f8fafc',
-                                    grid: '#e2e8f0',
+                                    gold: '#d97706',      // Amber 600
+                                    dark: '#0f172a',      // Slate 900
+                                    panel: '#1e293b',     // Slate 800
+                                    surface: '#f8fafc',   // Slate 50
+                                    grid: '#e2e8f0',      // Slate 200
                                 }
                             }
                         }
@@ -33,26 +35,30 @@
         initTailwind();
     </script>
     
+    <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Supabase JS Client Library UMD (Stabil untuk Browser) -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-    
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #e2e8f0; }
+        
+        /* Scrollbar Desktop ala VHP */
         ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; border-left: 1px solid #cbd5e1; }
         ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        
         .vhp-shadow { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
         .grid-input { border: 1px solid #cbd5e1; padding: 4px 8px; border-radius: 2px; outline: none; transition: border-color 0.2s; width: 100%; text-align: center; font-weight: 600; color: #0f172a; }
         .grid-input:focus { border-color: #d97706; box-shadow: 0 0 0 1px #d97706; }
+        
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; }
             .vhp-shadow { box-shadow: none !important; border: none !important; }
         }
+
+        /* --- TAMBAHAN KHUSUS UNTUK HP ANDROID & IPHONE --- */
         @media screen and (max-width: 768px) {
             body, html { max-width: 100vw; overflow-x: hidden; }
             .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -63,9 +69,12 @@
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col antialiased pb-12">
 
+    <!-- TOP HEADER BAR (VHP Style) -->
     <header class="bg-platinum-dark text-white border-b-4 border-platinum-gold no-print z-30 sticky top-0 vhp-shadow">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6">
             <div class="flex flex-wrap items-center justify-between py-3 gap-3">
+                
+                <!-- Logo & Brand -->
                 <div class="flex items-center space-x-3 sm:space-x-4 w-full md:w-auto">
                     <div class="bg-white p-1.5 rounded shadow-sm border border-slate-300 shrink-0">
                         <img src="logo.png" alt="Logo Platinum Hotel" class="h-6 sm:h-8 w-auto object-contain">
@@ -78,6 +87,7 @@
                     </div>
                 </div>
 
+                <!-- Global Action & Date Selection -->
                 <div class="flex flex-wrap items-center gap-2 w-full md:w-auto justify-start md:justify-end">
                     <div class="bg-platinum-panel border border-slate-700 rounded flex items-center px-2 py-1.5 text-sm shadow-inner flex-grow sm:flex-grow-0 justify-center">
                         <i class="fa-regular fa-calendar-days text-platinum-gold mr-2"></i>
@@ -111,6 +121,7 @@
             </div>
         </div>
 
+        <!-- MODULE TABS -->
         <div class="bg-platinum-panel pt-2 px-2 sm:px-6 max-w-[1400px] mx-auto flex space-x-1 overflow-x-auto no-scrollbar flex-nowrap" style="-webkit-overflow-scrolling: touch;">
             <button onclick="switchTab('dashboard')" id="tab-dashboard" class="nav-btn active shrink-0 px-4 py-2 text-sm font-bold bg-white text-platinum-dark border-t-2 border-platinum-gold rounded-t flex items-center gap-2">
                 <i class="fa-solid fa-chart-bar"></i> Dashboard
@@ -136,6 +147,7 @@
         </div>
     </header>
 
+    <!-- SYSTEM STATUS BAR -->
     <div class="bg-white border-b border-slate-300 text-[11px] sm:text-xs px-4 sm:px-6 py-2 shadow-sm max-w-[1400px] mx-auto w-full flex flex-wrap justify-between items-center text-slate-500 font-medium gap-2">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 w-full sm:w-auto">
             <span class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> System Online</span>
@@ -146,7 +158,10 @@
         </button>
     </div>
 
+    <!-- MAIN WORKSPACE -->
     <main class="max-w-[1400px] mx-auto px-4 sm:px-6 mt-4 flex-1 w-full">
+
+        <!-- Notification Toast -->
         <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-10 opacity-0 transition-all duration-300 bg-platinum-dark text-white px-4 py-3 rounded shadow-xl flex items-center gap-3 border-l-4 border-emerald-500 pointer-events-none">
             <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
             <div>
@@ -155,6 +170,7 @@
             </div>
         </div>
 
+        <!-- SECTION 1: DASHBOARD -->
         <section id="view-dashboard" class="view-section space-y-4">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div class="bg-white p-3 sm:p-4 rounded vhp-shadow border-l-4 border-slate-500 flex items-center justify-between">
@@ -200,12 +216,13 @@
             </div>
         </section>
 
+        <!-- SECTION 2: OPENING STOCK -->
         <section id="view-opening" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
                     <h2 class="text-sm font-bold text-platinum-dark flex items-center gap-2"><i class="fa-solid fa-box-open text-platinum-gold"></i> Opening Stock / Carry Forward</h2>
-                    <button onclick="copyClosingFromYesterday()" class="bg-platinum-panel hover:bg-slate-700 text-white text-[10px] sm:text-xs font-medium px-2 sm:px-3 py-1.5 rounded flex items-center gap-1.5 transition">
-                        <i class="fa-solid fa-clock-rotate-left text-platinum-gold"></i> Load Prev. Closing
+                    <button onclick="forcePullClosingFromYesterday()" class="bg-platinum-panel hover:bg-slate-700 text-white text-[10px] sm:text-xs font-medium px-2 sm:px-3 py-1.5 rounded flex items-center gap-1.5 transition" title="Tarik ulang data penutupan terakhir secara paksa">
+                        <i class="fa-solid fa-clock-rotate-left text-platinum-gold"></i> <span class="hidden sm:inline">Force Sync Prev. Closing</span><span class="sm:hidden">Force Sync</span>
                     </button>
                 </div>
                 <div class="overflow-x-auto w-full" style="-webkit-overflow-scrolling: touch;">
@@ -226,6 +243,7 @@
             </div>
         </section>
 
+        <!-- SECTION 3: STORE REQUISITION (SR) -->
         <section id="view-sr" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 rounded-t">
@@ -248,6 +266,7 @@
             </div>
         </section>
 
+        <!-- SECTION 4: CLOSING & VARIANCE -->
         <section id="view-closing" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex justify-between items-center rounded-t">
@@ -276,6 +295,7 @@
             </div>
         </section>
 
+        <!-- SECTION 5: MODIFIER & SPILLAGE -->
         <section id="view-modifier" class="view-section hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-white rounded vhp-shadow border border-slate-300 h-fit">
@@ -332,6 +352,7 @@
             </div>
         </section>
 
+        <!-- SECTION 6: ENTERTAINMENT -->
         <section id="view-entertainment" class="view-section hidden space-y-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="bg-white rounded vhp-shadow border border-slate-300 h-fit">
@@ -383,6 +404,7 @@
             </div>
         </section>
 
+        <!-- SECTION 7: MONTHLY RECAP -->
         <section id="view-recap" class="view-section hidden space-y-4">
             <div class="bg-white rounded vhp-shadow border border-slate-300 print-card">
                 <div class="bg-slate-50 px-4 py-3 border-b border-slate-300 flex flex-wrap justify-between items-center gap-2 rounded-t no-print">
@@ -438,6 +460,7 @@
 
     </main>
 
+    <!-- MODAL: ADD MASTER ITEM -->
     <div id="addItemModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-md max-w-md w-full shadow-2xl border border-slate-300 flex flex-col">
             <div class="bg-platinum-panel px-4 py-3 flex justify-between items-center rounded-t-md">
@@ -480,20 +503,8 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT AMAN & STABIL -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        const SUPABASE_URL = 'https://hupvhnvztvzqbdhuukpt.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_AvLLrrZ0-7F2_AXjC1LQhg_H_bolEmB';
-        
-        let supabase = null;
-        try {
-            if (window.supabase && window.supabase.createClient) {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            }
-        } catch (e) {
-            console.error("Gagal inisialisasi Supabase:", e);
-        }
-
         const DEFAULT_ITEMS = [
             { id: 'item_1', name: 'Johnnie Walker Black Label', category: 'Spirits', bottleSizeMl: 750 },
             { id: 'item_2', name: 'Hendrick\'s Gin', category: 'Spirits', bottleSizeMl: 700 },
@@ -533,48 +544,9 @@
         function saveMasterItems() { localStorage.setItem('bartrack_master_items_ml', JSON.stringify(masterItems)); }
         function saveAllToLocalStorage() { localStorage.setItem('bartrack_inventory_data_ml', JSON.stringify(inventoryData)); }
 
-        async function manualSaveWithFeedback() {
+        function manualSaveWithFeedback() {
             saveAllToLocalStorage();
-
-            try {
-                if (supabase) {
-                    const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
-                    const rowsToInsert = [];
-
-                    masterItems.forEach(item => {
-                        const op = getEffectiveOpening(item.id);
-                        const sr = parseFloat(rec.sr[item.id]?.totalMl) || 0;
-                        let spill = 0, ent = 0;
-                        (rec.modifiers || []).filter(m => m.itemId === item.id).forEach(m => spill += parseFloat(m.qty) || 0);
-                        (rec.entertainment || []).filter(e => e.itemId === item.id).forEach(e => ent += parseFloat(e.qty) || 0);
-                        const pos = parseFloat(rec.closing[`${item.id}_pos`]) || 0;
-                        
-                        const exp = op + sr - spill - ent - pos;
-                        const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
-
-                        rowsToInsert.push({
-                            nama_barang: item.name,
-                            Qty: cl
-                        });
-                    });
-
-                    if (rowsToInsert.length > 0) {
-                        const { error } = await supabase
-                            .from('phbinventory')
-                            .insert(rowsToInsert);
-
-                        if (error) {
-                            console.error('Gagal Supabase:', error.message);
-                        }
-                    }
-                }
-
-                showToast('Database Updated', 'Data berhasil disimpan & disinkronkan ke Supabase.');
-
-            } catch (err) {
-                console.error('Error:', err);
-                showToast('Tersimpan Lokal', 'Perubahan data berhasil disimpan.');
-            }
+            showToast('Database Updated', 'Perubahan data berhasil disinkronkan ke local storage.');
         }
 
         function showToast(title, message) {
@@ -620,7 +592,9 @@
             const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
             const formattedDate = `${String(currentDay).padStart(2, '0')} ${monthNames[currentMonth]} ${currentYear}`;
             document.getElementById('activeDateDisplay').textContent = formattedDate;
+            
             initDateRecord(getDateKey());
+            autoPullOpeningStock(); // FITUR AUTO PULL DIPANGGIL DI SINI
             renderActiveTab();
         }
 
@@ -638,15 +612,42 @@
             if (!inventoryData[key]) inventoryData[key] = { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
         }
 
+        // FUNGSI AUTO-PULL STOCK TERBARU (Mencari 30 hari ke belakang)
+        function getLastKnownClosing(itemId, day = currentDay, month = currentMonth, year = currentYear) {
+            for(let i = 1; i <= 30; i++) {
+                let pastDate = new Date(year, month, day);
+                pastDate.setDate(pastDate.getDate() - i);
+                let testKey = getDateKey(pastDate.getDate(), pastDate.getMonth(), pastDate.getFullYear());
+
+                if (inventoryData[testKey] && inventoryData[testKey].closing && inventoryData[testKey].closing[itemId] !== undefined) {
+                    return parseFloat(inventoryData[testKey].closing[itemId]) || 0;
+                }
+            }
+            return 0;
+        }
+
+        // FUNGSI INI AKAN OTOMATIS MENGISI OPENING JIKA MASIH KOSONG
+        function autoPullOpeningStock() {
+            const key = getDateKey();
+            let hasChanges = false;
+            
+            masterItems.forEach(item => {
+                if (inventoryData[key].opening[item.id] === undefined) {
+                    inventoryData[key].opening[item.id] = getLastKnownClosing(item.id);
+                    hasChanges = true;
+                }
+            });
+            
+            if(hasChanges) saveAllToLocalStorage();
+        }
+
         function getEffectiveOpening(itemId, day = currentDay, month = currentMonth, year = currentYear) {
             const key = getDateKey(day, month, year);
             initDateRecord(key);
-            if (inventoryData[key].opening[itemId] !== undefined) return inventoryData[key].opening[itemId];
-            const prevKey = getPreviousDayKey(day, month, year);
-            if (inventoryData[prevKey] && inventoryData[prevKey].closing && inventoryData[prevKey].closing[itemId] !== undefined) {
-                return parseFloat(inventoryData[prevKey].closing[itemId]) || 0;
+            if (inventoryData[key].opening[itemId] !== undefined) {
+                return inventoryData[key].opening[itemId];
             }
-            return 0;
+            return getLastKnownClosing(itemId, day, month, year);
         }
 
         function switchTab(tabId) {
@@ -690,7 +691,7 @@
         }
 
         function renderDashboard() {
-            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
+            const rec = inventoryData[getDateKey()];
             document.getElementById('kpiTotalItems').textContent = masterItems.length;
             
             let totalSRMl = 0, totalConsumedMl = 0, totalEntSpillMl = 0;
@@ -733,52 +734,36 @@
             });
         }
 
-        function copyClosingFromYesterday() {
+        // FUNGSI PAKSA TARIK CLOSING JIKA MANUAL DIBUTUHKAN
+        function forcePullClosingFromYesterday() {
             const cKey = getDateKey();
-            let lastValidKey = null;
-
-            for(let i = 1; i <= 30; i++) {
-                let pastDate = new Date(currentYear, currentMonth, currentDay);
-                pastDate.setDate(pastDate.getDate() - i);
-                let testKey = getDateKey(pastDate.getDate(), pastDate.getMonth(), pastDate.getFullYear());
-
-                if (inventoryData[testKey] && inventoryData[testKey].closing && Object.keys(inventoryData[testKey].closing).length > 0) {
-                    lastValidKey = testKey;
-                    break;
-                }
-            }
-
-            if (!lastValidKey) {
-                alert('Gagal: Tidak ada data Physical Closing tersimpan di hari-hari sebelumnya.');
-                return;
-            }
-
+            let pulled = false;
             masterItems.forEach(i => {
-                const lastClosingVal = inventoryData[lastValidKey].closing[i.id];
-                inventoryData[cKey].opening[i.id] = (lastClosingVal !== undefined && !isNaN(lastClosingVal)) ? parseFloat(lastClosingVal) : 0;
+                const lastCl = getLastKnownClosing(i.id);
+                inventoryData[cKey].opening[i.id] = lastCl;
+                pulled = true;
             });
-
-            saveAllToLocalStorage(); 
-            renderOpeningStockTable(); 
-            renderClosingTable();
-            renderDashboard();
-            showToast('Sukses', 'Data opening berhasil ditarik otomatis dari closing terakhir.');
+            if(pulled) {
+                saveAllToLocalStorage(); 
+                renderOpeningStockTable(); 
+                renderClosingTable();
+                renderDashboard();
+                showToast('Sukses', 'Data opening berhasil ditarik paksa dari closing terakhir.');
+            }
         }
 
         function renderOpeningStockTable() {
-            const key = getDateKey(); const prevKey = getPreviousDayKey();
             const tbody = document.getElementById('openingStockTable'); tbody.innerHTML = '';
             masterItems.forEach((item, idx) => {
                 const valMl = getEffectiveOpening(item.id);
-                const isAuto = inventoryData[key].opening[item.id] === undefined && inventoryData[prevKey]?.closing?.[item.id] !== undefined;
                 const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
                 tbody.innerHTML += `
                     <tr class="${bgClass} hover:bg-amber-50">
                         <td class="py-1.5 px-3 border border-slate-300 text-center text-slate-500">${idx + 1}</td>
-                        <td class="py-1.5 px-3 border border-slate-300 font-semibold text-slate-800">${item.name} ${isAuto ? '<span class="ml-2 text-[9px] bg-slate-200 text-slate-600 px-1 py-0.5 rounded border border-slate-300">AUTO</span>' : ''}</td>
+                        <td class="py-1.5 px-3 border border-slate-300 font-semibold text-slate-800">${item.name}</td>
                         <td class="py-1.5 px-3 border border-slate-300 text-slate-600">${item.category}</td>
                         <td class="py-1.5 px-3 border border-slate-300 text-center">
-                            <input type="number" value="${valMl}" onchange="updateOpeningStock('${item.id}', this.value)" class="grid-input">
+                            <input type="number" value="${valMl}" onchange="updateOpeningStock('${item.id}', this.value)" class="grid-input bg-amber-50">
                         </td>
                         <td class="py-1.5 px-3 border border-slate-300 text-center text-slate-500 text-xs">${formatBottleMl(valMl, item.bottleSizeMl)}</td>
                         <td class="py-1.5 px-3 border border-slate-300 text-center"><button onclick="deleteMasterItem('${item.id}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
@@ -788,7 +773,7 @@
         function updateOpeningStock(id, val) { inventoryData[getDateKey()].opening[id] = parseFloat(val)||0; saveAllToLocalStorage(); renderOpeningStockTable(); }
 
         function renderSRTable() {
-            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
+            const rec = inventoryData[getDateKey()];
             const tbody = document.getElementById('srTable'); tbody.innerHTML = '';
             masterItems.forEach((item, idx) => {
                 const sr = rec.sr[item.id] || { bottles: 0, totalMl: 0, ref: '', note: '' };
@@ -814,7 +799,7 @@
         }
 
         function renderClosingTable() {
-            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
+            const rec = inventoryData[getDateKey()];
             const tbody = document.getElementById('closingTable'); tbody.innerHTML = '';
             masterItems.forEach((item, idx) => {
                 const op = getEffectiveOpening(item.id); const sr = parseFloat(rec.sr[item.id]?.totalMl)||0;
@@ -824,6 +809,7 @@
                 const pos = parseFloat(rec.closing[`${item.id}_pos`])||0;
                 const exp = op + sr - spl - ent - pos;
                 const cl = rec.closing[item.id] !== undefined ? parseFloat(rec.closing[item.id]) : exp;
+                
                 const vari = exp - cl;
                 const statusHtml = getStockStatusBadge(cl, item.bottleSizeMl);
                 const bgClass = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50';
@@ -848,9 +834,8 @@
 
         function renderModifierTab() {
             populateItemDrop('modItemSelect');
-            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
             const tbody = document.getElementById('modifierLogTable'); tbody.innerHTML = '';
-            (rec.modifiers||[]).forEach((m, i) => {
+            (inventoryData[getDateKey()].modifiers||[]).forEach((m, i) => {
                 const itm = masterItems.find(x=>x.id===m.itemId);
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 border-b border-slate-200">
@@ -863,18 +848,15 @@
             });
         }
         function saveModifierLog(e) { e.preventDefault();
-            const key = getDateKey();
-            if (!inventoryData[key].modifiers) inventoryData[key].modifiers = [];
-            inventoryData[key].modifiers.push({ itemId: document.getElementById('modItemSelect').value, type: document.getElementById('modType').value, qty: parseFloat(document.getElementById('modQty').value)||0, note: document.getElementById('modNote').value });
+            inventoryData[getDateKey()].modifiers.push({ itemId: document.getElementById('modItemSelect').value, type: document.getElementById('modType').value, qty: parseFloat(document.getElementById('modQty').value)||0, note: document.getElementById('modNote').value });
             saveAllToLocalStorage(); e.target.reset(); renderModifierTab(); showToast('Saved', 'Ledger updated');
         }
         function delMod(i) { inventoryData[getDateKey()].modifiers.splice(i,1); saveAllToLocalStorage(); renderModifierTab(); }
 
         function renderEntertainmentTab() {
             populateItemDrop('entItemSelect');
-            const rec = inventoryData[getDateKey()] || { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
             const tbody = document.getElementById('entLogTable'); tbody.innerHTML = '';
-            (rec.entertainment||[]).forEach((e, i) => {
+            (inventoryData[getDateKey()].entertainment||[]).forEach((e, i) => {
                 const itm = masterItems.find(x=>x.id===e.itemId);
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 border-b border-slate-200">
@@ -887,9 +869,7 @@
             });
         }
         function saveEntertainmentLog(e) { e.preventDefault();
-            const key = getDateKey();
-            if (!inventoryData[key].entertainment) inventoryData[key].entertainment = [];
-            inventoryData[key].entertainment.push({ itemId: document.getElementById('entItemSelect').value, qty: parseFloat(document.getElementById('entQty').value)||0, approvedBy: document.getElementById('entApprovedBy').value, note: document.getElementById('entNote').value });
+            inventoryData[getDateKey()].entertainment.push({ itemId: document.getElementById('entItemSelect').value, qty: parseFloat(document.getElementById('entQty').value)||0, approvedBy: document.getElementById('entApprovedBy').value, note: document.getElementById('entNote').value });
             saveAllToLocalStorage(); e.target.reset(); renderEntertainmentTab(); showToast('Saved', 'Ledger updated');
         }
         function delEnt(i) { inventoryData[getDateKey()].entertainment.splice(i,1); saveAllToLocalStorage(); renderEntertainmentTab(); }

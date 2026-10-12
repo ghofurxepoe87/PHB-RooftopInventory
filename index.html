@@ -38,6 +38,9 @@
     <!-- Font Awesome & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- ========== SUPABASE SDK ========== -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #e2e8f0; }
@@ -113,8 +116,8 @@
                         <button onclick="openAddItemModal()" class="flex-1 sm:flex-none bg-slate-700 hover:bg-slate-600 border border-slate-500 text-white font-medium px-3 py-1.5 rounded text-xs sm:text-sm transition flex items-center justify-center gap-1.5">
                             <i class="fa-solid fa-plus text-platinum-gold"></i> Master Item
                         </button>
-                        <button onclick="manualSaveWithFeedback()" class="flex-1 sm:flex-none bg-platinum-gold hover:bg-amber-500 text-white font-bold px-3 py-1.5 rounded text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-md">
-                            <i class="fa-solid fa-floppy-disk"></i> Simpan
+                        <button onclick="saveAllToSupabase()" id="btnSaveData" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-md">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Simpan Online
                         </button>
                     </div>
                 </div>
@@ -150,11 +153,13 @@
     <!-- SYSTEM STATUS BAR -->
     <div class="bg-white border-b border-slate-300 text-[11px] sm:text-xs px-4 sm:px-6 py-2 shadow-sm max-w-[1400px] mx-auto w-full flex flex-wrap justify-between items-center text-slate-500 font-medium gap-2">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 w-full sm:w-auto">
-            <span class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> System Online</span>
+            <span class="flex items-center gap-1.5" id="statusIndicator">
+                <div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div> Connecting DB...
+            </span>
             <span class="sm:border-l border-slate-300 sm:pl-4 flex items-center gap-1.5"><i class="fa-solid fa-folder-open text-amber-500"></i> Active Period: <span id="activeDateDisplay" class="text-platinum-dark font-bold">Memuat...</span></span>
         </div>
         <button onclick="exportJSONBackup()" class="hover:text-platinum-dark flex items-center gap-1 ml-auto sm:ml-0 bg-slate-100 px-2 py-1 rounded">
-            <i class="fa-solid fa-database"></i> Backup DB
+            <i class="fa-solid fa-database"></i> Backup Local
         </button>
     </div>
 
@@ -163,7 +168,7 @@
 
         <!-- Notification Toast -->
         <div id="toastNotification" class="fixed bottom-6 right-6 z-50 transform translate-y-10 opacity-0 transition-all duration-300 bg-platinum-dark text-white px-4 py-3 rounded shadow-xl flex items-center gap-3 border-l-4 border-emerald-500 pointer-events-none">
-            <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+            <i class="fa-solid fa-circle-check text-emerald-500 text-lg" id="toastIcon"></i>
             <div>
                 <p class="text-sm font-bold" id="toastTitle">Berhasil</p>
                 <p class="text-xs text-slate-300" id="toastMessage">Data tersimpan</p>
@@ -503,8 +508,21 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JAVASCRIPT LOGIC DENGAN SUPABASE TERINTEGRASI -->
     <script>
+        // ==========================================
+        // 1. KONFIGURASI SUPABASE FINAL
+        // ==========================================
+        const SUPABASE_URL = 'https://hupvhnvztvzqbdhuukpt.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1cHZobnZ6dHZ6cWJkaHV1a3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAyNDY4NTIsImV4cCI6MjEwNTgyMjg1Mn0.E-XiAzngGIe_KAe2Znk201Jy55zwLUMOwL4cHhxQCPQ';
+        
+        let supabaseClient;
+        if (typeof supabase !== 'undefined') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+            console.error("Supabase SDK gagal dimuat.");
+        }
+
         const DEFAULT_ITEMS = [
             { id: 'item_1', name: 'Johnnie Walker Black Label', category: 'Spirits', bottleSizeMl: 750 },
             { id: 'item_2', name: 'Hendrick\'s Gin', category: 'Spirits', bottleSizeMl: 700 },
@@ -522,32 +540,113 @@
         let currentDay = new Date().getDate();
         let inventoryData = {};
 
-        window.onload = function() { initApp(); };
-
-        function initApp() {
-            loadLocalStorageData();
+        // Inisialisasi Aplikasi Saat Halaman Dibuka
+        window.onload = async function() { 
             setupYearDropdown();
             document.getElementById('monthSelect').value = currentMonth;
+            
+            // Tarik data dari Supabase saat aplikasi dibuka
+            await loadDataFromSupabase();
+            
             updateCalendarContext();
             renderActiveTab();
+        };
+
+        // ==========================================
+        // 2. FUNGSI DATABASE (SUPABASE & LOKAL)
+        // ==========================================
+        
+        // Fungsi menarik data dari Supabase
+        async function loadDataFromSupabase() {
+            try {
+                // UPDATE UI STATUS
+                const statusInd = document.getElementById('statusIndicator');
+                statusInd.innerHTML = '<div class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></div> Connecting DB...';
+                
+                // Menarik data dari tabel app_state
+                const { data, error } = await supabaseClient
+                    .from('app_state')
+                    .select('*')
+                    .eq('id', 1) 
+                    .single();
+
+                if (error && error.code !== 'PGRST116') throw error;
+
+                if (data) {
+                    masterItems = data.master_items || [...DEFAULT_ITEMS];
+                    inventoryData = data.inventory_data || {};
+                    
+                    // Simpan juga ke lokal sebagai cadangan
+                    localStorage.setItem('bartrack_master_items_ml', JSON.stringify(masterItems));
+                    localStorage.setItem('bartrack_inventory_data_ml', JSON.stringify(inventoryData));
+                    
+                    statusInd.innerHTML = '<div class="w-2 h-2 rounded-full bg-emerald-500"></div> Database Online';
+                } else {
+                    // Kalau database masih kosong
+                    loadLocalStorageData();
+                    statusInd.innerHTML = '<div class="w-2 h-2 rounded-full bg-amber-500"></div> DB Empty (Using Local)';
+                }
+            } catch (err) {
+                console.error("Gagal menarik data dari Supabase:", err.message);
+                loadLocalStorageData(); // Fallback ke lokal jika internet/koneksi mati
+                document.getElementById('statusIndicator').innerHTML = '<div class="w-2 h-2 rounded-full bg-red-500 animate-ping"></div> Offline (Local Mode)';
+            }
+        }
+
+        // Fungsi menyimpan data KE Supabase (Saat tombol 'Simpan Online' ditekan)
+        async function saveAllToSupabase() {
+            const btn = document.getElementById('btnSaveData');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            try {
+                // Simpan ke local storage dulu biar aman
+                localStorage.setItem('bartrack_master_items_ml', JSON.stringify(masterItems));
+                localStorage.setItem('bartrack_inventory_data_ml', JSON.stringify(inventoryData));
+
+                // Upsert ke Supabase (tabel 'app_state')
+                const { data, error } = await supabaseClient
+                    .from('app_state')
+                    .upsert({ 
+                        id: 1, 
+                        master_items: masterItems, 
+                        inventory_data: inventoryData,
+                        updated_at: new Date().toISOString()
+                    });
+
+                if (error) throw error;
+
+                showToast('Database Updated', 'Data berhasil tersimpan secara online.');
+                document.getElementById('statusIndicator').innerHTML = '<div class="w-2 h-2 rounded-full bg-emerald-500"></div> Database Online';
+                
+            } catch (err) {
+                console.error("Error saving to Supabase:", err.message);
+                showToast('Gagal Tersimpan Online', 'Koneksi database bermasalah. Data hanya tersimpan di perangkat ini (Local).');
+                document.getElementById('toastIcon').className = "fa-solid fa-triangle-exclamation text-red-500 text-lg";
+            } finally {
+                btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Simpan Online';
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                setTimeout(() => { document.getElementById('toastIcon').className = "fa-solid fa-circle-check text-emerald-500 text-lg"; }, 3000);
+            }
         }
 
         function loadLocalStorageData() {
             const savedItems = localStorage.getItem('bartrack_master_items_ml');
             if (savedItems) masterItems = JSON.parse(savedItems);
-            else { masterItems = [...DEFAULT_ITEMS]; saveMasterItems(); }
+            else masterItems = [...DEFAULT_ITEMS];
 
             const savedInventory = localStorage.getItem('bartrack_inventory_data_ml');
             if (savedInventory) inventoryData = JSON.parse(savedInventory);
         }
 
-        function saveMasterItems() { localStorage.setItem('bartrack_master_items_ml', JSON.stringify(masterItems)); }
-        function saveAllToLocalStorage() { localStorage.setItem('bartrack_inventory_data_ml', JSON.stringify(inventoryData)); }
-
-        function manualSaveWithFeedback() {
-            saveAllToLocalStorage();
-            showToast('Database Updated', 'Perubahan data berhasil disinkronkan ke local storage.');
+        function tempSaveLocalOnly() {
+            localStorage.setItem('bartrack_master_items_ml', JSON.stringify(masterItems));
+            localStorage.setItem('bartrack_inventory_data_ml', JSON.stringify(inventoryData));
         }
+
+        // ==========================================
+        // 3. UI & LOGIKA APLIKASI
+        // ==========================================
 
         function showToast(title, message) {
             const toast = document.getElementById('toastNotification');
@@ -594,7 +693,7 @@
             document.getElementById('activeDateDisplay').textContent = formattedDate;
             
             initDateRecord(getDateKey());
-            autoPullOpeningStock(); // FITUR AUTO PULL DIPANGGIL DI SINI
+            autoPullOpeningStock(); 
             renderActiveTab();
         }
 
@@ -612,7 +711,6 @@
             if (!inventoryData[key]) inventoryData[key] = { opening: {}, sr: {}, closing: {}, modifiers: [], entertainment: [] };
         }
 
-        // FUNGSI AUTO-PULL STOCK TERBARU (Mencari 30 hari ke belakang)
         function getLastKnownClosing(itemId, day = currentDay, month = currentMonth, year = currentYear) {
             for(let i = 1; i <= 30; i++) {
                 let pastDate = new Date(year, month, day);
@@ -626,7 +724,6 @@
             return 0;
         }
 
-        // FUNGSI INI AKAN OTOMATIS MENGISI OPENING JIKA MASIH KOSONG
         function autoPullOpeningStock() {
             const key = getDateKey();
             let hasChanges = false;
@@ -638,7 +735,7 @@
                 }
             });
             
-            if(hasChanges) saveAllToLocalStorage();
+            if(hasChanges) tempSaveLocalOnly();
         }
 
         function getEffectiveOpening(itemId, day = currentDay, month = currentMonth, year = currentYear) {
@@ -734,7 +831,6 @@
             });
         }
 
-        // FUNGSI PAKSA TARIK CLOSING JIKA MANUAL DIBUTUHKAN
         function forcePullClosingFromYesterday() {
             const cKey = getDateKey();
             let pulled = false;
@@ -744,7 +840,7 @@
                 pulled = true;
             });
             if(pulled) {
-                saveAllToLocalStorage(); 
+                tempSaveLocalOnly(); 
                 renderOpeningStockTable(); 
                 renderClosingTable();
                 renderDashboard();
@@ -770,7 +866,7 @@
                     </tr>`;
             });
         }
-        function updateOpeningStock(id, val) { inventoryData[getDateKey()].opening[id] = parseFloat(val)||0; saveAllToLocalStorage(); renderOpeningStockTable(); }
+        function updateOpeningStock(id, val) { inventoryData[getDateKey()].opening[id] = parseFloat(val)||0; tempSaveLocalOnly(); renderOpeningStockTable(); }
 
         function renderSRTable() {
             const rec = inventoryData[getDateKey()];
@@ -795,7 +891,7 @@
                 const btl = parseFloat(val)||0; const sz = masterItems.find(i=>i.id===id)?.bottleSizeMl || 750;
                 inventoryData[key].sr[id].bottles = btl; inventoryData[key].sr[id].totalMl = btl * sz;
             } else inventoryData[key].sr[id][field] = val;
-            saveAllToLocalStorage(); renderSRTable();
+            tempSaveLocalOnly(); renderSRTable();
         }
 
         function renderClosingTable() {
@@ -830,7 +926,7 @@
                     </tr>`;
             });
         }
-        function updateCls(k, v) { inventoryData[getDateKey()].closing[k] = parseFloat(v)||0; saveAllToLocalStorage(); renderClosingTable(); renderDashboard(); }
+        function updateCls(k, v) { inventoryData[getDateKey()].closing[k] = parseFloat(v)||0; tempSaveLocalOnly(); renderClosingTable(); renderDashboard(); }
 
         function renderModifierTab() {
             populateItemDrop('modItemSelect');
@@ -849,9 +945,9 @@
         }
         function saveModifierLog(e) { e.preventDefault();
             inventoryData[getDateKey()].modifiers.push({ itemId: document.getElementById('modItemSelect').value, type: document.getElementById('modType').value, qty: parseFloat(document.getElementById('modQty').value)||0, note: document.getElementById('modNote').value });
-            saveAllToLocalStorage(); e.target.reset(); renderModifierTab(); showToast('Saved', 'Ledger updated');
+            tempSaveLocalOnly(); e.target.reset(); renderModifierTab(); showToast('Tersimpan Lokal', 'Klik "Simpan Online" agar data aman.');
         }
-        function delMod(i) { inventoryData[getDateKey()].modifiers.splice(i,1); saveAllToLocalStorage(); renderModifierTab(); }
+        function delMod(i) { inventoryData[getDateKey()].modifiers.splice(i,1); tempSaveLocalOnly(); renderModifierTab(); }
 
         function renderEntertainmentTab() {
             populateItemDrop('entItemSelect');
@@ -870,9 +966,9 @@
         }
         function saveEntertainmentLog(e) { e.preventDefault();
             inventoryData[getDateKey()].entertainment.push({ itemId: document.getElementById('entItemSelect').value, qty: parseFloat(document.getElementById('entQty').value)||0, approvedBy: document.getElementById('entApprovedBy').value, note: document.getElementById('entNote').value });
-            saveAllToLocalStorage(); e.target.reset(); renderEntertainmentTab(); showToast('Saved', 'Ledger updated');
+            tempSaveLocalOnly(); e.target.reset(); renderEntertainmentTab(); showToast('Tersimpan Lokal', 'Klik "Simpan Online" agar data aman.');
         }
-        function delEnt(i) { inventoryData[getDateKey()].entertainment.splice(i,1); saveAllToLocalStorage(); renderEntertainmentTab(); }
+        function delEnt(i) { inventoryData[getDateKey()].entertainment.splice(i,1); tempSaveLocalOnly(); renderEntertainmentTab(); }
 
         function populateItemDrop(el) {
             const sel = document.getElementById(el); sel.innerHTML = '';
@@ -929,11 +1025,12 @@
             const ib = parseFloat(document.getElementById('newItemInitialBottles').value)||0;
             if(!nm) return;
             const nItem = { id:'item_'+Date.now(), name:nm, category:document.getElementById('newItemCategory').value, bottleSizeMl:cp };
-            masterItems.push(nItem); saveMasterItems();
-            inventoryData[getDateKey()].opening[nItem.id] = ib * cp; saveAllToLocalStorage();
-            closeAddItemModal(); renderActiveTab(); showToast('Success', `Item "${nm}" added.`);
+            masterItems.push(nItem); 
+            inventoryData[getDateKey()].opening[nItem.id] = ib * cp; 
+            tempSaveLocalOnly();
+            closeAddItemModal(); renderActiveTab(); showToast('Tersimpan Lokal', `Klik "Simpan Online" agar item tersimpan permanen.`);
         }
-        function deleteMasterItem(id) { if(confirm('Delete this master item?')) { masterItems = masterItems.filter(i=>i.id!==id); saveMasterItems(); renderActiveTab(); } }
+        function deleteMasterItem(id) { if(confirm('Delete this master item?')) { masterItems = masterItems.filter(i=>i.id!==id); tempSaveLocalOnly(); renderActiveTab(); } }
 
         function exportToCSV() {
             let csv = `Report Inventory ML\nName,Cat,Size,Opn,SR,Spill,Ent,POS,Cls,Var\n`;
